@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=AddressRepository::class)
@@ -19,36 +20,53 @@ class Address
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 255,
+     *      minMessage = "Nombre de caractère minimum {{ limit }}",
+     *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      */
     private $name_address;
 
     /**
      * @ORM\Column(type="string", length=5)
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * 
      */
     private $street_number;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotNull
+     * @Assert\NotBlank
      */
     private $street;
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Assert\NotBlank
+     * @Assert\NotNull
      */
     private $postal_code;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotNull
+     * @Assert\NotBlank
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotNull
+     * @Assert\NotBlank
      */
     private $country;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses")
+     * 
      */
     private $user;
 

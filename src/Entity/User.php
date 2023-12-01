@@ -23,37 +23,57 @@ class User
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Assert\NotNull(message="Ne doit pas etre null")
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Unique
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=65)
+     * @Assert\NotBlank
+     * @Assert\NotNull
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=65)
+     * @Assert\NotBlank
+     * @Assert\NotNull
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Url
      */
     private $avatar;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Unique
+     * @Assert\Email(message = "l'email '{{ value }}' n'est pas valide.")
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=15)
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Unique
      */
     private $phone_number;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\IsNull
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 5000,
+     *      minMessage = "Nombre de caractère minimum {{ limit }}",
+     *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      */
     private $description;
 
@@ -64,6 +84,7 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user")
+     * @Assert\IsNull
      */
     private $addresses;
 
