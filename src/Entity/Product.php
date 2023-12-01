@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,6 +17,7 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"users"})
      */
     private $id;
 
@@ -28,6 +30,7 @@ class Product
      *      max = 250,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+     * @Groups({"users"})
      */
     private $title;
 
@@ -35,6 +38,7 @@ class Product
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\IsNull
      * @Assert\Url
+     * @Groups({"users"})
      */
     private $picture;
 
@@ -46,6 +50,7 @@ class Product
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+     * @Groups({"users"})
      */
     private $year;
 
@@ -57,6 +62,7 @@ class Product
      *      max = 50,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+     * @Groups({"users"})
      */
     private $serie_number;
 

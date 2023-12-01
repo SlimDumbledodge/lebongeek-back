@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=AddressRepository::class)
@@ -15,6 +16,7 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"users"})
      */
     private $id;
 
@@ -25,6 +27,7 @@ class Address
      *      max = 255,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+     * @Groups({"users"})
      */
     private $name_address;
 
@@ -32,7 +35,7 @@ class Address
      * @ORM\Column(type="string", length=5)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * 
+     * @Groups({"users"})
      */
     private $street_number;
 
@@ -40,6 +43,7 @@ class Address
      * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      * @Assert\NotBlank
+     * @Groups({"users"})
      */
     private $street;
 
@@ -47,6 +51,7 @@ class Address
      * @ORM\Column(type="string", length=10)
      * @Assert\NotBlank
      * @Assert\NotNull
+     * @Groups({"users"})
      */
     private $postal_code;
 
@@ -54,6 +59,7 @@ class Address
      * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      * @Assert\NotBlank
+     * @Groups({"users"})
      */
     private $city;
 
@@ -61,6 +67,7 @@ class Address
      * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      * @Assert\NotBlank
+     * @Groups({"users"})
      */
     private $country;
 

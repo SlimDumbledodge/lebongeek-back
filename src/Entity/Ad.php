@@ -5,8 +5,7 @@ namespace App\Entity;
 use App\Repository\AdRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
-
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=AdRepository::class)
@@ -17,6 +16,7 @@ class Ad
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"users"})
      */
     private $id;
 
@@ -29,6 +29,7 @@ class Ad
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+     * @Groups({"users"})
      */
     private $description;
 
@@ -37,6 +38,7 @@ class Ad
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Positive
+     * @Groups({"users"})
      */
     private $price;
 
@@ -44,6 +46,7 @@ class Ad
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
      * @Assert\NotNull
+     * @Groups({"users"})
      */
     private $state;
 
@@ -51,16 +54,19 @@ class Ad
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      * @Assert\NotNull
+     * @Groups({"users"})
      */
     private $location;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"users"})
      */
     private $created_at;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups({"users"})
      */
     private $updated_at;
 
