@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\AdRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity(repositoryClass=AdRepository::class)
  */
@@ -19,21 +21,35 @@ class Ad
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 5000,
+     *      minMessage = "Nombre de caractère minimum {{ limit }}",
+     *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      */
     private $description;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Positive
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank
+     * @Assert\NotNull
      */
     private $state;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\NotNull
      */
     private $location;
 

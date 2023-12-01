@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  */
@@ -19,21 +21,42 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 250,
+     *      minMessage = "Nombre de caractère minimum {{ limit }}",
+     *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\IsNull
+     * @Assert\Url
      */
     private $picture;
 
     /**
      * @ORM\Column(type="string", length=4, nullable=true)
+     * @Assert\IsNull
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 15,
+     *      minMessage = "Nombre de caractère minimum {{ limit }}",
+     *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      */
     private $year;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Assert\IsNull
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 50,
+     *      minMessage = "Nombre de caractère minimum {{ limit }}",
+     *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      */
     private $serie_number;
 
