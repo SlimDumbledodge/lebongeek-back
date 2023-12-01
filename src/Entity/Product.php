@@ -72,6 +72,7 @@ class Product
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Assert\NotNull
      */
     private $created_at;
 

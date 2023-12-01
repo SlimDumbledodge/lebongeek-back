@@ -97,6 +97,7 @@ class AppFixtures extends Fixture
    
             $ad->setDescription($faker->text());
             $ad->setPrice($faker->randomFloat(2, 0, 1000));
+            $ad->setDescription($faker->text());
             $ad->setState(rand(1,6));
             $ad->setLocation($faker->city());
             $ad->setCreatedAt(new \DateTimeImmutable());
