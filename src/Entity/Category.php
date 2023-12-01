@@ -28,16 +28,17 @@ class Category
      * @Assert\Unique
      */
     private $name;
-
+    
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $image;
+    
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="category")
      */
     private $product;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $image;
 
     public function __construct()
     {
