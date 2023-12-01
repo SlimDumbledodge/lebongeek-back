@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -19,6 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"users"})
      */
     private $id;
 
@@ -27,6 +29,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Unique
+     * @Groups({"users"})
      */
     private $username;
 
@@ -34,6 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=65)
      * @Assert\NotBlank
      * @Assert\NotNull
+     * @Groups({"users"})
      */
     private $firstname;
 
@@ -41,12 +45,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=65)
      * @Assert\NotBlank
      * @Assert\NotNull
+     * @Groups({"users"})
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Url
+     * @Groups({"users"})
      */
     private $avatar;
 
@@ -56,6 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotNull
      * @Assert\Unique
      * @Assert\Email(message = "l'email '{{ value }}' n'est pas valide.")
+     * @Groups({"users"})
      */
     private $email;
 
@@ -64,38 +71,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Unique
+     * @Groups({"users"})
      */
     private $phone_number;
 
     /**
      * @ORM\Column(type="text")
      * @Assert\IsNull
+     * @Assert\IsNull
      * @Assert\Length(
      *      min = 5,
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+     * @Groups({"users"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"users"})
      */
     private $created_at;
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user")
      * @Assert\IsNull
+     * @Groups({"users"})
      */
     private $addresses;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="user")
+     * @Groups({"users"})
      */
     private $product;
 
     /**
      * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="user")
+     * @Groups({"users"})
      */
     private $ad;
 
