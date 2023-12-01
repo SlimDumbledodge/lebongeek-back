@@ -1,8 +1,10 @@
 <?php
 
-class Provider
+namespace App\DataFixtures\Provider;
+
+class CategoryProvider
 {
-    private $category = [
+    private $categories = [
         'Jeux video',
         'figurines',
         'Comics',
@@ -24,4 +26,12 @@ class Provider
         'Jouets',
         'Evènements Geek'
     ];
+
+    public function allCategories()
+    {
+        $categories = $this->categories;
+
+        return $categories;
+    }
+
 }

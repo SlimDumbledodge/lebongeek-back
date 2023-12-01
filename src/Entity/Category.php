@@ -28,11 +28,17 @@ class Category
      * @Assert\Unique
      */
     private $name;
-
+    
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $image;
+    
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="category")
      */
     private $product;
+
 
     public function __construct()
     {
@@ -82,6 +88,18 @@ class Category
                 $product->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }
