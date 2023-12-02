@@ -16,7 +16,7 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $id;
 
@@ -27,7 +27,7 @@ class Address
      *      max = 255,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $name_address;
 
@@ -35,7 +35,7 @@ class Address
      * @ORM\Column(type="string", length=5)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $street_number;
 
@@ -43,7 +43,7 @@ class Address
      * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      * @Assert\NotBlank
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $street;
 
@@ -51,7 +51,7 @@ class Address
      * @ORM\Column(type="string", length=10)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $postal_code;
 
@@ -59,7 +59,7 @@ class Address
      * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      * @Assert\NotBlank
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $city;
 
@@ -67,13 +67,13 @@ class Address
      * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      * @Assert\NotBlank
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $country;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses")
-     * 
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses", cascade={"persist"})
+     * @Groups({"address"})
      */
     private $user;
 

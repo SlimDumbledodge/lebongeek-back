@@ -23,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $id;
 
@@ -31,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $username;
 
@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=65)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $firstname;
 
@@ -47,14 +47,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=65)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Url
-     * @Groups({"users"})
+     * @Assert\NotNull
+     * @Groups({"users", "products", "address"})
      */
     private $avatar;
 
@@ -63,7 +64,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Email(message = "l'email '{{ value }}' n'est pas valide.")
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $email;
 
@@ -71,8 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=15)
      * @Assert\NotBlank
      * @Assert\NotNull
-
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $phone_number;
 
@@ -83,19 +83,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $created_at;
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user", cascade={"persist"}, orphanRemoval=true)
-     * 
      * @Groups({"users"})
      */
     private $addresses;

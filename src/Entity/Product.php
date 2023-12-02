@@ -17,7 +17,7 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $id;
 
@@ -30,7 +30,7 @@ class Product
      *      max = 250,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $title;
 
@@ -38,7 +38,7 @@ class Product
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\IsNull
      * @Assert\Url
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $picture;
 
@@ -50,7 +50,7 @@ class Product
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $year;
 
@@ -62,17 +62,19 @@ class Product
      *      max = 50,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $serie_number;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product")
+     * @Groups({"products"})
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product")
+     * @Groups({"products"})
      */
     private $category;
 
@@ -80,13 +82,13 @@ class Product
      * @ORM\Column(type="datetime_immutable")
      * @Assert\DateTime
      * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $created_at;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $updated_at;
 

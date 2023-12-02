@@ -27,13 +27,13 @@ class Category
      * @Assert\NotNull
      * @Assert\NotBlank
      * @Assert\Unique
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $name;
     
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users"})
+     * @Groups({"users", "products"})
      */
     private $image;
     

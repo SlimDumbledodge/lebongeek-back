@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Controller\Api;
+
+use App\Entity\Address;
+use App\Repository\AddressRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+class AddressController extends AbstractController
+{
+    /**
+     * @Route("/api/addresses", name="app_api_addresses", methods={"GET"})
+     */
+    public function list(AddressRepository $addressRepository): JsonResponse
+    {
+        $addresses = $addressRepository->findAll();
+        
+        return $this->json($addresses, Response::HTTP_OK, [], ["groups" => "address"]);
+    }
+
+    /**
+     * @Route("/api/{id}/addresses", name="app_api_addresses_show", methods={"GET"})
+     */
+    public function show(AddressRepository $addressRepository, int $id): JsonResponse
+    {
+        $address = $addressRepository->find($id);
+
+        if (!$address) {
+            return $this->json([
+                "error" => "Address not found"
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($address, Response::HTTP_OK, [], ["groups" => "address"]);
+    }
+
+    /**
+     * @Route("/api/addresses", name="app_api_addresses_new", methods={"POST"})
+     */
+    public function create(Request $request,AddressRepository $addressRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator): JsonResponse
+    {
+        //recupere le contenu de la requette (json)
+        $content = $request->getContent();
+
+        try {
+            // converti le contenu de la requette en objet address
+            $address = $serializerInterface->deserialize($content, Address::class, 'json');
+
+            // $address->setNameAddress($address->getNameAddress());
+            // $address->setStreetNumber($address->getStreetNumber());
+            // $address->setStreet($address->getStreet());
+            // $address->setPostalCode($address->getPostalCode());
+            // $address->setCity($address->getCity());
+            // $address->setCountry($address->getCountry());
+            $address->user->setId($address->user->getUser());
+
+        } catch (\Exception $e) {
+            // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
+            return $this->json(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+            // valide l'objet address (permet de vérifier les assert de l'entité)
+            $errors = $validator->validate($address);
+            // si il y a des erreurs, on les retourne
+            if (count($errors) > 0) {
+                $dataErrors = [];
+            foreach($errors as $error){
+                // ici je met le nom du champs en index et le message d'erreur en valeur
+                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+            }
+                return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            // si il n'y a pas d'erreur, on enregistre l'objet address en base de données
+            $addressRepository->add($address,true);
+            
+        
+        // si tout s'est bien passé, on retourne une reponse 200
+        return $this->json(["message" => "address created successfully"], Response::HTTP_CREATED);
+    }
+}
