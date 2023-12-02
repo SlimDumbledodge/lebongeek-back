@@ -77,9 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $phone_number;
 
     /**
-     * @ORM\Column(type="text")
-     * @Assert\IsNull
-     * @Assert\IsNull
+     * @ORM\Column(type="text", nullable=true)
      * @Assert\Length(
      *      min = 5,
      *      max = 5000,

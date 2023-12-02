@@ -90,22 +90,31 @@ class UserController extends AbstractController
 
     /**
      * @return JsonResponse
-     * @Route("/api/{id}/users", name="app_api_users_update", methods={"PATCH"})
+     * @Route("/api/{id}/users", name="app_api_users_update", methods={"PUT"})
      */
-    public function update(Request $request,UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
+    public function update(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
     {
+
+        // Récupérer l'utilisateur existant par son ID
+        $existingUser = $userRepository->find($id);
+            
+        // Vérifier si l'utilisateur existe
+        if (!$existingUser) {
+            return $this->json(["error" => "User not found"], Response::HTTP_NOT_FOUND);
+        }
+
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
 
         try {
             // converti le contenu de la requette en objet User
-            $user = $serializerInterface->deserialize($content, User::class, 'json');
+            $updatedUser = $serializerInterface->deserialize($content, User::class, 'json');
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
             return $this->json(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
             // valide l'objet User (permet de vérifier les assert de l'entité)
-            $errors = $validator->validate($user);
+            $errors = $validator->validate($updatedUser);
             // si il y a des erreurs, on les retourne
             if (count($errors) > 0) {
                 $dataErrors = [];
@@ -114,14 +123,20 @@ class UserController extends AbstractController
                 $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
             }
                 return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-            $user->setCreatedAt(new \DateTimeImmutable());     
+            }  
+
+            // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
+            $existingUser->setUsername($updatedUser->getUsername());
+            $existingUser->setFirstname($updatedUser->getFirstname());
+            $existingUser->setAvatar($updatedUser->getAvatar() ?? 'http://placehold.it/300x300');
+            $existingUser->setPhoneNumber($updatedUser->getPhoneNumber());
+            $existingUser->setDescription($updatedUser->getDescription() ?? 'Je n\'ai pas de description');
+
             // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
-            $userRepository->add($user,true);
+            $userRepository->add($existingUser,true);
             
-        
         // si tout s'est bien passé, on retourne une reponse 200
-        return $this->json(["message" => "User modified successfully"], Response::HTTP_CREATED);
+        return $this->json(["message" => "User modified successfully"], Response::HTTP_OK);
     }
 
 
