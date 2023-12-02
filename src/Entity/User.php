@@ -31,7 +31,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\NotNull
-
      * @Groups({"users"})
      */
     private $username;
@@ -63,7 +62,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      * @Assert\NotNull
-
      * @Assert\Email(message = "l'email '{{ value }}' n'est pas valide.")
      * @Groups({"users"})
      */
@@ -98,20 +96,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $created_at;
 
     /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user", cascade={"persist"}, orphanRemoval=true)
      * 
      * @Groups({"users"})
      */
     private $addresses;
 
     /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="user", orphanRemoval=true)
      * @Groups({"users"})
      */
     private $product;
 
     /**
-     * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="user", orphanRemoval=true)
      * @Groups({"users"})
      */
     private $ad;
