@@ -71,7 +71,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=15)
      * @Assert\NotBlank
      * @Assert\NotNull
-
      * @Groups({"users"})
      */
     private $phone_number;
@@ -95,7 +94,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user", cascade={"persist"}, orphanRemoval=true)
-     * 
      * @Groups({"users"})
      */
     private $addresses;
