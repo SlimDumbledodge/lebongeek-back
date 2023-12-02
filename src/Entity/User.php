@@ -12,8 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
+
+
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * 
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {    /**
@@ -28,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * @Assert\Unique
+
      * @Groups({"users"})
      */
     private $username;
@@ -60,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * @Assert\Unique
+
      * @Assert\Email(message = "l'email '{{ value }}' n'est pas valide.")
      * @Groups({"users"})
      */
@@ -70,7 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=15)
      * @Assert\NotBlank
      * @Assert\NotNull
-     * @Assert\Unique
+
      * @Groups({"users"})
      */
     private $phone_number;
@@ -95,8 +98,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $created_at;
 
     /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user")
-     * @Assert\IsNull
+     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user", cascade={"persist"})
+     * 
      * @Groups({"users"})
      */
     private $addresses;
@@ -379,5 +382,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->created_at = new \DateTime();
     }
 }

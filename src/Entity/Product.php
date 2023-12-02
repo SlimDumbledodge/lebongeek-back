@@ -78,12 +78,15 @@ class Product
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Assert\DateTime
      * @Assert\NotNull
+     * @Groups({"users"})
      */
     private $created_at;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups({"users"})
      */
     private $updated_at;
 

@@ -57,7 +57,11 @@ class UserController extends AbstractController
         try {
             // converti le contenu de la requette en objet User
             $user = $serializerInterface->deserialize($content, User::class, 'json');
-            // valide l'objet User
+        } catch (\Exception $e) {
+            // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
+            return $this->json(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+            // valide l'objet User (permet de vérifier les assert de l'entité)
             $errors = $validator->validate($user);
             // si il y a des erreurs, on les retourne
             if (count($errors) > 0) {
@@ -66,22 +70,15 @@ class UserController extends AbstractController
                 // ici je met le nom du champs en index et le message d'erreur en valeur
                 $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
             }
-                return $this->json($errors, Response::HTTP_BAD_REQUEST);
+                return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
+            $user->setCreatedAt(new \DateTimeImmutable());
             // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
             $userRepository->add($user,true);
             
-        } catch (\Exception $e) {
-            // si une erreur est survenue, on retourne une reponse 400 avec le message d'erreur
-            return $this->json([
-                "error" => $e->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
-
-        }
+        
         // si tout s'est bien passé, on retourne une reponse 200
-        return $this->json([
-            "message" => "User created successfully"
-        ], Response::HTTP_CREATED);
+        return $this->json(["message" => "User created successfully"], Response::HTTP_CREATED);
     }
 
 
