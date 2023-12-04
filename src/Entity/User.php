@@ -66,7 +66,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=15, nullable=false, unique=true)
      * @Assert\NotBlank
+
      * @Groups({"users", "products", "address"})
+
      */
     private $phone_number;
 
