@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
@@ -113,9 +114,9 @@ class UserController extends AbstractController
         try {
             // converti le contenu de la requette en objet User
             $updatedUser = $serializerInterface->deserialize($content, User::class, 'json');
-        } catch (\Exception $e) {
-            // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
-            return $this->json(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (NotEncodableValueException $err) {
+            // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
+            return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
         }
             // valide l'objet User (permet de vérifier les assert de l'entité)
             $errors = $validator->validate($updatedUser);
@@ -145,8 +146,6 @@ class UserController extends AbstractController
         return $this->json(["message" => "User modified successfully"], Response::HTTP_OK);
     }
 
-
-
     /**
      * @return JsonResponse
      * @Route("/api/{id}/users", name="app_api_users_delete", methods={"DELETE"})
@@ -163,7 +162,5 @@ class UserController extends AbstractController
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User deleted successfully"], Response::HTTP_OK);
     }
-
-
 
 }

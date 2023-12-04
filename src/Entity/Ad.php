@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AdRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -16,64 +18,72 @@ class Ad
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users"})
+     * @Groups({"users", "ads"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
      * @Assert\Length(
      *      min = 5,
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users"})
+     * @Groups({"users", "ads"})
      */
     private $description;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
      * @Assert\Positive
-     * @Groups({"users"})
+     * @Groups({"users", "ads"})
      */
     private $price;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "ads"})
      */
     private $state;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "ads"})
      */
     private $location;
 
     /**
-     * @ORM\Column(type="datetime_immutable")
-     * @Groups({"users"})
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     * @Groups({"users", "ads"})
      */
     private $created_at;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"users"})
+     * @Groups({"users", "ads"})
      */
     private $updated_at;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="ad")
+     * @Groups({"ads"})
      */
     private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="ad")
+     * @Groups({"ads"})
+     */
+    private $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -160,6 +170,36 @@ class Ad
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->setAd($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        if ($this->products->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getAd() === $this) {
+                $product->setAd(null);
+            }
+        }
 
         return $this;
     }

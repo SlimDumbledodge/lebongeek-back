@@ -32,40 +32,35 @@ class Address
     private $name_address;
 
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
      * @Groups({"users", "address"})
      */
     private $street_number;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
      * @Groups({"users", "address"})
      */
     private $street;
 
     /**
-     * @ORM\Column(type="string", length=10)
+     * @ORM\Column(type="string", length=10, nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
      * @Groups({"users", "address"})
      */
     private $postal_code;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
      * @Groups({"users", "address"})
      */
     private $city;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
      * @Groups({"users", "address"})
      */

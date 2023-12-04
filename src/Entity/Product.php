@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -17,80 +16,80 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products"})
+     * @Groups({"users", "products", "ads"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
      * @Assert\Length(
      *      min = 5,
      *      max = 250,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products"})
+     * @Groups({"users", "products", "ads"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\IsNull
      * @Assert\Url
-     * @Groups({"users", "products"})
+     * @Groups({"users", "products", "ads"})
      */
     private $picture;
 
     /**
      * @ORM\Column(type="string", length=4, nullable=true)
-     * @Assert\IsNull
      * @Assert\Length(
      *      min = 3,
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products"})
+     * @Groups({"users", "products", "ads"})
      */
     private $year;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\IsNull
      * @Assert\Length(
      *      min = 3,
      *      max = 50,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products"})
+     * @Groups({"users", "products", "ads"})
      */
     private $serie_number;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product")
-     * @Groups({"products"})
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product", cascade={"persist"})
+     * @Groups({"products", "ads"})
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product")
-     * @Groups({"products"})
+     * @Groups({"products", "ads"})
      */
     private $category;
 
     /**
-     * @ORM\Column(type="datetime_immutable")
-     * @Assert\DateTime
-     * @Assert\NotNull
-     * @Groups({"users", "products"})
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     * @Groups({"users", "products", "ads"})
      */
     private $created_at;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"users", "products"})
+     * @Groups({"users", "products", "ads"})
      */
     private $updated_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products")
+     * @Groups({"products"})
+     */
+    private $ad;
 
     public function getId(): ?int
     {
@@ -189,6 +188,18 @@ class Product
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): self
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getAd(): ?Ad
+    {
+        return $this->ad;
+    }
+
+    public function setAd(?Ad $ad): self
+    {
+        $this->ad = $ad;
 
         return $this;
     }

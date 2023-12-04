@@ -18,27 +18,26 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users"})
+     * @Groups({"users", "categories"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull
+     * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Assert\Unique
-     * @Groups({"users", "products"})
+     * @Groups({"users", "products", "categories"})
      */
     private $name;
     
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users", "products"})
+     * @Groups({"users", "products", "categories"})
      */
     private $image;
     
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="category")
+     * @Groups({"categories"})
      */
     private $product;
 
