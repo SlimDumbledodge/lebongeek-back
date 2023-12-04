@@ -16,7 +16,7 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $id;
 
@@ -27,53 +27,48 @@ class Address
      *      max = 255,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $name_address;
 
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $street_number;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $street;
 
     /**
-     * @ORM\Column(type="string", length=10)
+     * @ORM\Column(type="string", length=10, nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $postal_code;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $city;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotNull
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users"})
+     * @Groups({"users", "address"})
      */
     private $country;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses")
-     * 
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses", cascade={"persist"})
+     * @Groups({"address"})
      */
     private $user;
 

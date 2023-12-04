@@ -1,0 +1,147 @@
+<?php
+
+namespace App\Controller\Api;
+
+use App\Entity\Ad;
+use App\Repository\AdRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+
+class AdController extends AbstractController
+{
+    /**
+     * @Route("/api/ads", name="app_api_ads", methods={"GET"})
+     */
+    public function list(AdRepository $adRepository): JsonResponse
+    {
+        $ads = $adRepository->findAll();
+
+        return $this->json($ads, Response::HTTP_OK, [], ["groups" => "ads"]);
+    }
+
+    /**
+     * @Route("/api/{id}/ads", name="app_api_ads_show", methods={"GET"})
+     */
+    public function show(AdRepository $adRepository, int $id): JsonResponse
+    {
+        $ad = $adRepository->find($id);
+
+        if (!$ad) {
+            return $this->json([
+                "error" => "Ad not found"
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($ad, Response::HTTP_OK, [], ["groups" => "ads"]);
+    }
+
+    /**
+     * @Route("/api/ads", name="app_api_ads_create", methods={"POST"})
+     */
+    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator): JsonResponse
+    {
+        //recupere le contenu de la requette (json)
+        $content = $request->getContent();
+
+        try {
+            // converti le contenu de la requette en objet ad
+            $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
+            $ad->setCreatedAt(new \DateTimeImmutable());
+
+        } catch (\Exception $e) {
+            // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
+            return $this->json(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+            // valide l'objet ad permet de vérifier les assert de l'entité
+            $errors = $validator->validate($ad);
+            // si il y a des erreurs, on les retourne
+            if (count($errors) > 0) {
+                $dataErrors = [];
+            foreach($errors as $error){
+                // ici je met le nom du champs en index et le message d'erreur en valeur
+                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+            }
+                return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            // si il n'y a pas d'erreur, on enregistre l'objet ad en base de données
+            $adRepository->add($ad,true);
+            
+        
+        // si tout s'est bien passé, on retourne une reponse 200
+        return $this->json(["message" => "ad created successfully"], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Route("/api/{id}/ads", name="app_api_ads_update", methods={"PUT"})
+     */
+    public function update(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
+    {
+
+        // Récupérer l'article existant par son ID
+        $existingAd = $adRepository->find($id);
+            
+        // Vérifier si l'article existe
+        if (!$existingAd) {
+            return $this->json(["error" => "Ad not found"], Response::HTTP_NOT_FOUND);
+        }
+
+        //recupere le contenu de la requette (json)
+        $content = $request->getContent();
+
+        try {
+            // converti le contenu de la requette en objet ad
+            $updatedAd = $serializerInterface->deserialize($content, Ad::class, 'json');
+        } catch (NotEncodableValueException $err) {
+            // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
+            return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
+        }
+            // valide l'objet Ad (permet de vérifier les assert de l'entité)
+            $errors = $validator->validate($updatedAd);
+            // si il y a des erreurs, on les retourne
+            if (count($errors) > 0) {
+                $dataErrors = [];
+            foreach($errors as $error){
+                // ici je met le nom du champs en index et le message d'erreur en valeur
+                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+            }
+                return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+            }  
+
+            // Mettre à jour les propriétés de l'article existant avec les nouvelles données
+            $existingAd->setDescription($updatedAd->getDescription());
+            $existingAd->setPrice($updatedAd->getPrice());
+            $existingAd->setState($updatedAd->getState());
+            $existingAd->setLocation($updatedAd->getLocation());
+            $existingAd->setUpdatedAt(new \DateTimeImmutable());
+            $existingAd->setUser($updatedAd->getUser());
+            
+
+            // si il n'y a pas d'erreur, on enregistre l'objet Ad en base de données
+            $adRepository->add($existingAd,true);
+            
+        // si tout s'est bien passé, on retourne une reponse 200
+        return $this->json(["message" => "Ad modified successfully"], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/{id}/ads", name="app_api_ads_delete", methods={"DELETE"})
+     */
+    public function delete(AdRepository $adRepository, int $id): JsonResponse
+    {
+        $ad = $adRepository->find($id);
+        // si l'utilisateur n'existe pas, on retourne une reponse 404
+        if (!$ad) {
+            return $this->json(["error" => "ad not found"], Response::HTTP_NOT_FOUND);
+        }
+
+        $adRepository->remove($ad, true);
+        // si tout s'est bien passé, on retourne une reponse 200
+        return $this->json(["message" => "ad deleted successfully"], Response::HTTP_OK);
+    }
+}

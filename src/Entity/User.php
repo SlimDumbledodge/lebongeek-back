@@ -23,55 +23,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=65)
+     * @ORM\Column(type="string", length=65, nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $firstname;
 
     /**
-     * @ORM\Column(type="string", length=65)
+     * @ORM\Column(type="string", length=65, nullable=false)
      * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\Url
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $avatar;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Assert\NotNull
      * @Assert\Email(message = "l'email '{{ value }}' n'est pas valide.")
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=15)
+     * @ORM\Column(type="string", length=15, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Assert\NotNull
-     * @Groups({"users"})
+
+     * @Groups({"users", "products", "address"})
+
      */
     private $phone_number;
 
@@ -82,13 +79,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users"})
+     * @Groups({"users", "products", "address"})
      */
     private $description;
 
     /**
-     * @ORM\Column(type="datetime_immutable")
-     * @Groups({"users"})
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     * @Groups({"users", "products", "address"})
      */
     private $created_at;
 
@@ -112,7 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $password;
 

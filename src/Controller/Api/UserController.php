@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
@@ -52,7 +54,7 @@ class UserController extends AbstractController
      * @return JsonResponse
      * @Route("/api/users", name="app_api_users_new", methods={"POST"})
      */
-    public function create(Request $request,UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator): JsonResponse
+    public function create(Request $request,UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
@@ -60,6 +62,12 @@ class UserController extends AbstractController
         try {
             // converti le contenu de la requette en objet User
             $user = $serializerInterface->deserialize($content, User::class, 'json');
+
+            $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+            $user->setAvatar($user->getAvatar() ?? 'http://placehold.it/300x300');
+            $user->setCreatedAt(new \DateTimeImmutable());
+            $user->setRoles(['ROLE_USER']);
+
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
             return $this->json(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
@@ -75,9 +83,6 @@ class UserController extends AbstractController
             }
                 return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-            /* $user->setPassword($this->passwordHasher->hashPassword($user, 'password')); */
-            $user->setCreatedAt(new \DateTimeImmutable());
-            $user->setRoles(['ROLE_USER']);
             // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
             $userRepository->add($user,true);
             
@@ -109,9 +114,9 @@ class UserController extends AbstractController
         try {
             // converti le contenu de la requette en objet User
             $updatedUser = $serializerInterface->deserialize($content, User::class, 'json');
-        } catch (\Exception $e) {
-            // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
-            return $this->json(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (NotEncodableValueException $err) {
+            // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
+            return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
         }
             // valide l'objet User (permet de vérifier les assert de l'entité)
             $errors = $validator->validate($updatedUser);
@@ -128,9 +133,11 @@ class UserController extends AbstractController
             // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
             $existingUser->setUsername($updatedUser->getUsername());
             $existingUser->setFirstname($updatedUser->getFirstname());
-            $existingUser->setAvatar($updatedUser->getAvatar() ?? 'http://placehold.it/300x300');
+            $existingUser->setLastname($updatedUser->getLastname());
+            $existingUser->setAvatar($updatedUser->getAvatar());
             $existingUser->setPhoneNumber($updatedUser->getPhoneNumber());
             $existingUser->setDescription($updatedUser->getDescription() ?? 'Je n\'ai pas de description');
+            
 
             // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
             $userRepository->add($existingUser,true);
@@ -138,8 +145,6 @@ class UserController extends AbstractController
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User modified successfully"], Response::HTTP_OK);
     }
-
-
 
     /**
      * @return JsonResponse
@@ -157,7 +162,5 @@ class UserController extends AbstractController
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User deleted successfully"], Response::HTTP_OK);
     }
-
-
 
 }
