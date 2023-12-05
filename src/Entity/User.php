@@ -12,11 +12,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
-
-
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * 
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {    /**
@@ -66,9 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=15, nullable=false, unique=true)
      * @Assert\NotBlank
-
      * @Groups({"users", "products", "address"})
-
      */
     private $phone_number;
 

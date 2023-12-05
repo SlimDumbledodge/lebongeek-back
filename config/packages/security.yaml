@@ -5,14 +5,39 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        login:
+            pattern: ^/api/login
+            stateless: true
+            json_login:
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            # logout:
+            #     path: /api/logout  # Utilisez le même chemin que celui configuré pour le pare-feu login
+            #     success_handler: lexik_jwt_authentication.handler.logout.success_handler
+
+        api:
+            pattern:   ^/api
+            stateless: true
+            jwt: ~
         main:
             lazy: true
-            provider: users_in_memory
+            # provider: app_user_provider
+            # form_login:
+            #     # "app_login" is the name of the route created previously
+            #     login_path: app_security_login
+            #     check_path: app_security_login
+            # logout:
+            #     path: '/logout'
+            #     controller: App\Controller\LogoutController::logout
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -24,7 +49,8 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # - { path: ^/api/users, roles: ROLE_USER }
+        # - { path: ^/api/users, methods: POST, roles: ROLE_ADMIN }
 
 when@test:
     security:

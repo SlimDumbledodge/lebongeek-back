@@ -16,7 +16,11 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 class CategoryController extends AbstractController
 {
     /**
+     * Get all data from Category entity
+     * 
      * @Route("/api/categories", name="app_api_category", methods={"GET"})
+     * @param CategoryRepository $categoryRepository
+     * @return JsonResponse
      */
     public function list(CategoryRepository $categoryRepository): JsonResponse
     {
@@ -26,10 +30,12 @@ class CategoryController extends AbstractController
 
 
     /**
+     * Get data from Category entity
+     * 
+     * @Route("/api/{id}/categories", name="app_api_category_show", methods={"GET"})
      * @param CategoryRepository $categoryRepository
      * @param integer $id
      * @return JsonResponse
-     * @Route("/api/{id}/categories", name="app_api_category_show", methods={"GET"})
      */
     public function show(CategoryRepository $categoryRepository, int $id): JsonResponse
     {
@@ -47,8 +53,14 @@ class CategoryController extends AbstractController
 
 
     /**
-     * @return JsonResponse
+     * Create new data in Category entity
+     * 
      * @Route("/api/categories", name="app_api_category_create", methods={"POST"})
+     * @param Request $request
+     * @param CategoryRepository $categoryRepository
+     * @param SerializerInterface $serializer
+     * @param ValidatorInterface $validator
+     * @return void
      */
     public function create(Request $request, CategoryRepository $categoryRepository, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -56,9 +68,6 @@ class CategoryController extends AbstractController
 
         try{
             $categories = $serializer->deserialize($content, Category::class, 'json');
-
-            /* $categories->setName($categories->getName());
-            $categories->setImage($categories->getImage()); */
 
         } catch (NotEncodableValueException $err) {
             // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
@@ -82,8 +91,15 @@ class CategoryController extends AbstractController
 
 
     /**
-     * @return JsonResponse
+     * Edit data in Category entity
+     * 
      * @Route("/api/{id}/categories", name="app_api_category_update", methods={"PUT"})
+     * @param Request $request
+     * @param CategoryRepository $categoryRepository
+     * @param SerializerInterface $serializer
+     * @param ValidatorInterface $validator
+     * @param integer $id
+     * @return void
      */
     public function update(Request $request, CategoryRepository $categoryRepository, SerializerInterface $serializer, ValidatorInterface $validator, int $id)
     {
@@ -116,13 +132,18 @@ class CategoryController extends AbstractController
         $existingCategory->setName($updatedCategory->getName());
         $existingCategory->setImage($updatedCategory->getImage());
 
-        $categoryRepository->add($updatedCategory, true);
+        $categoryRepository->add($existingCategory, true);
+
         return $this->json(["message" => "Category updated successfully"], Response::HTTP_OK);
     }
 
     /**
-     * @return JsonResponse
+     * Delete data from Category entity
+     * 
      * @Route("/api/{id}/categories", name="app_api_category_delete", methods={"DELETE"})
+     * @param CategoryRepository $categoryRepository
+     * @param integer $id
+     * @return void
      */
     public function delete(CategoryRepository $categoryRepository, int $id)
     {

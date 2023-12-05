@@ -15,7 +15,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class AddressController extends AbstractController
 {
     /**
+     * Get all data from Address entity
+     * 
      * @Route("/api/addresses", name="app_api_addresses", methods={"GET"})
+     * @param AddressRepository $addressRepository
+     * @return JsonResponse
      */
     public function list(AddressRepository $addressRepository): JsonResponse
     {
@@ -25,7 +29,12 @@ class AddressController extends AbstractController
     }
 
     /**
+     * Get data from Address entity
+     * 
      * @Route("/api/{id}/addresses", name="app_api_addresses_show", methods={"GET"})
+     * @param AddressRepository $addressRepository
+     * @param integer $id
+     * @return JsonResponse
      */
     public function show(AddressRepository $addressRepository, int $id): JsonResponse
     {
@@ -41,7 +50,14 @@ class AddressController extends AbstractController
     }
 
     /**
+     * Create new data in Address entity
+     * 
      * @Route("/api/addresses", name="app_api_addresses_new", methods={"POST"})
+     * @param Request $request
+     * @param AddressRepository $addressRepository
+     * @param SerializerInterface $serializerInterface
+     * @param ValidatorInterface $validator
+     * @return JsonResponse
      */
     public function create(Request $request, AddressRepository $addressRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator): JsonResponse
     {
@@ -84,7 +100,15 @@ class AddressController extends AbstractController
     }
 
     /**
+     * Edit data in Address entity
+     * 
      * @Route("/api/{id}/addresses", name="app_api_addresses_update", methods={"PUT"})
+     * @param Request $request
+     * @param AddressRepository $addressRepository
+     * @param SerializerInterface $serializerInterface
+     * @param ValidatorInterface $validator
+     * @param integer $id
+     * @return JsonResponse
      */
     public function update(Request $request, AddressRepository $addressRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
     {
@@ -136,7 +160,12 @@ class AddressController extends AbstractController
     }
 
     /**
+     * Delete data from Address entity
+     * 
      * @Route("/api/{id}/addresses", name="app_api_addresses_delete", methods={"DELETE"})
+     * @param AddressRepository $addressRepository
+     * @param integer $id
+     * @return JsonResponse
      */
     public function delete(AddressRepository $addressRepository, int $id): JsonResponse
     {

@@ -17,23 +17,26 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserController extends AbstractController
 {
     /**
+     * Get all data from User entity
+     * 
      * @Route("/api/users", name="app_api_users", methods={"GET"})
+     * @param UserRepository $userRepository
+     * @return JsonResponse
      */
     public function list(UserRepository $userRepository): JsonResponse
     {
         $users = $userRepository->findAll();
 
-        
         return $this->json($users, Response::HTTP_OK, [], ["groups" => "users"]);
     }
 
-
-
     /**
+     * Get data from User entity
+     * 
+     * @Route("/api/{id}/users", name="app_api_users_show", methods={"GET"})
      * @param UserRepository $userRepository
      * @param integer $id
      * @return JsonResponse
-     * @Route("/api/{id}/users", name="app_api_users_show", methods={"GET"})
      */
     public function show(UserRepository $userRepository, int $id): JsonResponse
     {
@@ -48,11 +51,16 @@ class UserController extends AbstractController
         return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
     }
 
-
-
     /**
-     * @return JsonResponse
+     * Create new data in User entity
+     * 
      * @Route("/api/users", name="app_api_users_new", methods={"POST"})
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializerInterface
+     * @param ValidatorInterface $validator
+     * @param UserPasswordHasherInterface $passwordHasher
+     * @return JsonResponse
      */
     public function create(Request $request,UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
@@ -91,11 +99,16 @@ class UserController extends AbstractController
         return $this->json(["message" => "User created successfully"], Response::HTTP_CREATED);
     }
 
-
-
     /**
-     * @return JsonResponse
+     * Edit data in User entity
+     * 
      * @Route("/api/{id}/users", name="app_api_users_update", methods={"PUT"})
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializerInterface
+     * @param ValidatorInterface $validator
+     * @param integer $id
+     * @return JsonResponse
      */
     public function update(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
     {
@@ -147,8 +160,12 @@ class UserController extends AbstractController
     }
 
     /**
-     * @return JsonResponse
+     * Delete data from User entity
+     * 
      * @Route("/api/{id}/users", name="app_api_users_delete", methods={"DELETE"})
+     * @param UserRepository $userRepository
+     * @param integer $id
+     * @return JsonResponse
      */
     public function delete(UserRepository $userRepository, int $id): JsonResponse
     {

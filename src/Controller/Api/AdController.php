@@ -16,7 +16,11 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 class AdController extends AbstractController
 {
     /**
+     * Get all data from Ad entity
+     * 
      * @Route("/api/ads", name="app_api_ads", methods={"GET"})
+     * @param AdRepository $adRepository
+     * @return JsonResponse
      */
     public function list(AdRepository $adRepository): JsonResponse
     {
@@ -26,7 +30,12 @@ class AdController extends AbstractController
     }
 
     /**
+     * Get data from Ad entity
+     * 
      * @Route("/api/{id}/ads", name="app_api_ads_show", methods={"GET"})
+     * @param AdRepository $adRepository
+     * @param integer $id
+     * @return JsonResponse
      */
     public function show(AdRepository $adRepository, int $id): JsonResponse
     {
@@ -42,7 +51,14 @@ class AdController extends AbstractController
     }
 
     /**
+     * Create new data in Ad entity
+     * 
      * @Route("/api/ads", name="app_api_ads_create", methods={"POST"})
+     * @param Request $request
+     * @param AdRepository $adRepository
+     * @param SerializerInterface $serializerInterface
+     * @param ValidatorInterface $validator
+     * @return JsonResponse
      */
     public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator): JsonResponse
     {
@@ -78,7 +94,15 @@ class AdController extends AbstractController
     }
 
     /**
+     * Edit data in Ad entity
+     * 
      * @Route("/api/{id}/ads", name="app_api_ads_update", methods={"PUT"})
+     * @param Request $request
+     * @param AdRepository $adRepository
+     * @param SerializerInterface $serializerInterface
+     * @param ValidatorInterface $validator
+     * @param integer $id
+     * @return JsonResponse
      */
     public function update(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
     {
@@ -130,7 +154,12 @@ class AdController extends AbstractController
     }
 
     /**
+     * Delete data from Ad entity
+     * 
      * @Route("/api/{id}/ads", name="app_api_ads_delete", methods={"DELETE"})
+     * @param AdRepository $adRepository
+     * @param integer $id
+     * @return JsonResponse
      */
     public function delete(AdRepository $adRepository, int $id): JsonResponse
     {

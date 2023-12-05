@@ -16,7 +16,11 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 class ProductController extends AbstractController
 {
     /**
+     * Get all data from Product entity
+     * 
      * @Route("/api/products", name="app_api_product", methods={"GET"})
+     * @param ProductRepository $productRepository
+     * @return JsonResponse
      */
     public function list(ProductRepository $productRepository): JsonResponse
     {
@@ -27,10 +31,12 @@ class ProductController extends AbstractController
 
 
     /**
+     * Get data from Product entity
+     * 
+     * @Route("/api/{id}/products", name="app_api_product_show", methods={"GET"})
      * @param ProductRepository $productRepository
      * @param integer $id
      * @return JsonResponse
-     * @Route("/api/{id}/products", name="app_api_product_show", methods={"GET"})
      */
     public function show(ProductRepository $productRepository, int $id): JsonResponse
     {
@@ -47,8 +53,14 @@ class ProductController extends AbstractController
 
 
     /**
-     * @return JsonResponse
+     * Create new data in Product entity
+     * 
      * @Route("/api/products", name="app_api_product_new", methods={"POST"})
+     * @param Request $request
+     * @param ProductRepository $productRepository
+     * @param SerializerInterface $serializer
+     * @param ValidatorInterface $validator
+     * @return JsonResponse
      */
     public function create(Request $request, ProductRepository $productRepository, SerializerInterface $serializer, ValidatorInterface $validator): JsonResponse
     {
@@ -86,8 +98,15 @@ class ProductController extends AbstractController
 
 
     /**
-     * @return JsonResponse
+     * Edit data in Product entity
+     * 
      * @Route("/api/{id}/products", name="app_api_product_update", methods={"PUT"})
+     * @param Request $request
+     * @param ProductRepository $productRepository
+     * @param SerializerInterface $serializerInterface
+     * @param ValidatorInterface $validator
+     * @param integer $id
+     * @return void
      */
     public function update(Request $request, ProductRepository $productRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id){
 
@@ -138,9 +157,15 @@ class ProductController extends AbstractController
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "Product modified successfully"], Response::HTTP_OK);
     }
+    
     /**
-     * @return JsonResponse
+     * Delete data from Product entity
+     * 
      * @Route("/api/{id}/products", name="app_api_product_delete", methods={"DELETE"})
+     * @param Request $request
+     * @param ProductRepository $productRepository
+     * @param integer $id
+     * @return JsonResponse
      */
     public function delete(Request $request, ProductRepository $productRepository, int $id): JsonResponse
     {
