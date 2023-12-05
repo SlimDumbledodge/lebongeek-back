@@ -110,13 +110,14 @@ class CategoryController extends AbstractController
                 $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
             }
             //on retourne les erreurs
-            return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
         $existingCategory->setName($updatedCategory->getName());
         $existingCategory->setImage($updatedCategory->getImage());
 
-        $categoryRepository->add($updatedCategory, true);
+        $categoryRepository->add($existingCategory, true);
+
         return $this->json(["message" => "Category updated successfully"], Response::HTTP_OK);
     }
 
