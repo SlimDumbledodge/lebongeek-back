@@ -63,11 +63,11 @@ class AddressController extends AbstractController
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
-
+        $user = $this->getUser();
         try {
             // converti le contenu de la requette en objet address
             $address = $serializerInterface->deserialize($content, Address::class, 'json');
-
+            $address->setUser($user);
             // $address->setNameAddress($address->getNameAddress());
             // $address->setStreetNumber($address->getStreetNumber());
             // $address->setStreet($address->getStreet());

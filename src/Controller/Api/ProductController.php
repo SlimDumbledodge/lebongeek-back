@@ -67,13 +67,13 @@ class ProductController extends AbstractController
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
         //recupere l'utilisateur connecté
-        /* $user = $this->getUser(); */
+        $user = $this->getUser();
         
         try{
         //deserialise le json en objet
         $product = $serializer->deserialize($content, Product::class, 'json');
         $product->setCreatedAt(new \DateTimeImmutable());
-        /* $product->setUser($user); */
+        $product->setUser($user);
 
        
 
