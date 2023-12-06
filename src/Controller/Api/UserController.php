@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -37,7 +36,6 @@ class UserController extends AbstractController
      * 
      * @Route("/api/{id}/users", name="app_api_users_show", methods={"GET"})
      * @param UserRepository $userRepository
-     * @param integer $id
      * @return JsonResponse
      */
     public function show(UserRepository $userRepository, User $user): JsonResponse
@@ -112,22 +110,18 @@ class UserController extends AbstractController
     /**
      * Edit data in User entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === loggedUser")
      * @Route("/api/{id}/users", name="app_api_users_update", methods={"PUT"})
      * @param Request $request
      * @param UserRepository $userRepository
      * @param SerializerInterface $serializerInterface
      * @param ValidatorInterface $validator
-     * @param integer $id
      * @return JsonResponse
      */
-    public function update(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
+    public function update(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, User $loggedUser): JsonResponse
     {
-
-        // Récupérer l'utilisateur existant par son ID
-        $existingUser = $userRepository->find($id);
-            
         // Vérifier si l'utilisateur existe
-        if (!$existingUser) {
+        if (!$loggedUser) {
             return $this->json(["error" => "User not found"], Response::HTTP_NOT_FOUND);
         }
 
@@ -154,16 +148,16 @@ class UserController extends AbstractController
             }  
 
             // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
-            $existingUser->setUsername($updatedUser->getUsername());
-            $existingUser->setFirstname($updatedUser->getFirstname());
-            $existingUser->setLastname($updatedUser->getLastname());
-            $existingUser->setAvatar($updatedUser->getAvatar());
-            $existingUser->setPhoneNumber($updatedUser->getPhoneNumber());
-            $existingUser->setDescription($updatedUser->getDescription() ?? 'Je n\'ai pas de description');
+            $loggedUser->setUsername($updatedUser->getUsername());
+            $loggedUser->setFirstname($updatedUser->getFirstname());
+            $loggedUser->setLastname($updatedUser->getLastname());
+            $loggedUser->setAvatar($updatedUser->getAvatar());
+            $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
+            $loggedUser->setDescription($updatedUser->getDescription() ?? 'Je n\'ai pas de description');
             
 
             // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
-            $userRepository->add($existingUser,true);
+            $userRepository->add($loggedUser,true);
             
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User modified successfully"], Response::HTTP_OK);
@@ -171,23 +165,24 @@ class UserController extends AbstractController
 
     /**
      * Delete data from User entity
-     * 
+     *
+     * @Security("is_granted('ROLE_USER') and user === loggedUser")
      * @Route("/api/{id}/users", name="app_api_users_delete", methods={"DELETE"})
      * @param UserRepository $userRepository
-     * @param integer $id
+     * @param User $loggedUser
      * @return JsonResponse
      */
-    public function delete(UserRepository $userRepository, int $id): JsonResponse
+    public function delete(UserRepository $userRepository, User $loggedUser): JsonResponse
     {
-        $user = $userRepository->find($id);
         // si l'utilisateur n'existe pas, on retourne une reponse 404
-        if (!$user) {
+        if (!$loggedUser) {
             return $this->json(["error" => "User not found"], Response::HTTP_NOT_FOUND);
         }
 
-        $userRepository->remove($user, true);
+        $userRepository->remove($loggedUser, true);
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User deleted successfully"], Response::HTTP_OK);
     }
 
 }
+

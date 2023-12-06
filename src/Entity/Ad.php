@@ -81,7 +81,7 @@ class Ad
     private $products;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="ads")
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="ads", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;

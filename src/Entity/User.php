@@ -27,28 +27,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=64, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Groups({"users", "products", "address"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=65, nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users", "products", "address"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=65, nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users", "products", "address"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\Url
-     * @Groups({"users", "products", "address"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $avatar;
 
@@ -56,14 +56,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      * @Assert\NotBlank
      * @Assert\Email(message = "l'email '{{ value }}' n'est pas valide.")
-     * @Groups({"users", "products", "address"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=15, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Groups({"users", "products", "address"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $phone_number;
 
@@ -74,13 +74,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "address"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=false)
-     * @Groups({"users", "products", "address"})
+     * @Groups({"users", "products", "address", "ads"})
      */
     private $created_at;
 
