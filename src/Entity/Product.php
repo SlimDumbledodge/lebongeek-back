@@ -16,7 +16,7 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "ads", "categories"})
      */
     private $id;
 
@@ -28,14 +28,14 @@ class Product
      *      max = 250,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "ads", "categories"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Url
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "ads", "categories"})
      */
     private $picture;
 
@@ -46,7 +46,7 @@ class Product
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "ads", "categories"})
      */
     private $year;
 
@@ -57,7 +57,7 @@ class Product
      *      max = 50,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "ads", "categories"})
      */
     private $serie_number;
 
@@ -87,6 +87,7 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"products"})
      */
     private $ad;

@@ -20,9 +20,7 @@ security:
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-            # logout:
-            #     path: /api/logout  # Utilisez le même chemin que celui configuré pour le pare-feu login
-            #     success_handler: lexik_jwt_authentication.handler.logout.success_handler
+            
 
         api:
             pattern:   ^/api
