@@ -16,7 +16,7 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "categories", "ads"})
      */
     private $id;
 
@@ -28,14 +28,14 @@ class Product
      *      max = 250,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "categories", "ads"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Url
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "categories", "ads"})
      */
     private $picture;
 
@@ -46,7 +46,7 @@ class Product
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "categories", "ads"})
      */
     private $year;
 
@@ -57,7 +57,7 @@ class Product
      *      max = 50,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "categories", "ads"})
      */
     private $serie_number;
 
@@ -86,7 +86,7 @@ class Product
     private $updated_at;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products")
+     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"persist"})
      * @Groups({"products"})
      */
     private $ad;

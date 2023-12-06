@@ -18,7 +18,7 @@ class Ad
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "ads"})
+     * @Groups({"users", "categories", "ads"})
      */
     private $id;
 
@@ -30,7 +30,7 @@ class Ad
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "ads"})
+     * @Groups({"users", "categories", "ads"})
      */
     private $description;
 
@@ -38,33 +38,33 @@ class Ad
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\NotBlank
      * @Assert\Positive
-     * @Groups({"users", "ads"})
+     * @Groups({"users", "categories", "ads"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users", "ads"})
+     * @Groups({"users", "categories", "ads"})
      */
     private $state;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users", "ads"})
+     * @Groups({"users", "categories", "ads"})
      */
     private $location;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=false)
-     * @Groups({"users", "ads"})
+     * @Groups({"users", "categories", "ads"})
      */
     private $created_at;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"users", "ads"})
+     * @Groups({"users", "categories", "ads"})
      */
     private $updated_at;
 
@@ -79,6 +79,12 @@ class Ad
      * @Groups({"ads"})
      */
     private $products;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="ads")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $category;
 
     public function __construct()
     {
@@ -200,6 +206,18 @@ class Ad
                 $product->setAd(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

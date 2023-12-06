@@ -87,27 +87,6 @@ class AppFixtures extends Fixture
 
         }
 
-        //! PRODUCT
-
-        $productList = [];
-
-        for ($i = 0; $i < 20; $i++) {
-
-            $product = new Product();
-
-            $product->setTitle($faker->title());
-            $product->setPicture($faker->imageUrl(640, 480, 'dogs'));
-            $product->setYear($faker->year());
-            $product->setSerieNumber(rand(100, 30000));
-            $product->setCreatedAt(new \DateTimeImmutable());
-            $product->setCategory($faker->randomElement($categoryList));
-            $product->setUser($faker->randomElement($userList));
-            
-            $productList[] = $product;
-            
-            $manager->persist($product);
-        }
-
         //! AD
 
         $adList = [];
@@ -123,11 +102,36 @@ class AppFixtures extends Fixture
             $ad->setLocation($faker->city());
             $ad->setCreatedAt(new \DateTimeImmutable());
             $ad->setUser($faker->randomElement($userList));
-            $ad->addProduct($faker->randomElement($productList));
+            $ad->setCategory($faker->randomElement($categoryList));
+
+            // $ad->addProduct($faker->randomElement($productList));
+            
             
             $adList[] = $ad;
             
             $manager->persist($ad);
+        }
+
+        //! PRODUCT
+
+        $productList = [];
+
+        for ($i = 0; $i < 20; $i++) {
+
+            $product = new Product();
+
+            $product->setTitle($faker->title());
+            $product->setPicture($faker->imageUrl(640, 480, 'dogs'));
+            $product->setYear($faker->year());
+            $product->setSerieNumber(rand(100, 30000));
+            $product->setCreatedAt(new \DateTimeImmutable());
+            $product->setCategory($faker->randomElement($categoryList));
+            $product->setUser($faker->randomElement($userList));
+            $product->setAd($faker->unique->randomElement($adList));
+            
+            $productList[] = $product;
+            
+            $manager->persist($product);
         }
 
         $manager->flush();

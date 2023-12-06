@@ -10,6 +10,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -38,9 +40,17 @@ class UserController extends AbstractController
      * @param integer $id
      * @return JsonResponse
      */
-    public function show(UserRepository $userRepository, int $id): JsonResponse
+    public function show(UserRepository $userRepository, User $user): JsonResponse
     {
-        $user = $userRepository->find($id);
+        // $this->denyAccessUnlessGranted('ROLE_USER');
+        
+        // $user = $userRepository->find($id);
+
+        // if ($user !== $this->getUser()) {
+        //     dd("Tu fais quoi !?");
+        // } else {
+        //     dd("T le boss !");
+        // }
 
         if (!$user) {
             return $this->json([
