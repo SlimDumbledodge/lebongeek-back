@@ -39,12 +39,17 @@ class ProductController extends AbstractController
      */
     public function show(Product $product): JsonResponse
     {
+<<<<<<< HEAD
+=======
+    
+        $product = $productRepository->find($id);
+
+>>>>>>> a92e367cf7d12df2f1efb07a0c40304545c7be99
         if (!$product) {
             return $this->json([
                 "error" => "Product not found"
             ], Response::HTTP_NOT_FOUND);
         }
-
         return $this->json($product, Response::HTTP_OK, [], ["groups" => "products"]);
     }
 
@@ -63,7 +68,9 @@ class ProductController extends AbstractController
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
-        /* $user = $user->find($id); */
+        //recupere l'utilisateur connecté
+        /* $user = $this->getUser(); */
+        
         try{
         //deserialise le json en objet
         $product = $serializer->deserialize($content, Product::class, 'json');
