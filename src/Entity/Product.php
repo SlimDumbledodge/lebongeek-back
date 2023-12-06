@@ -16,7 +16,11 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+<<<<<<< HEAD
      * @Groups({"users", "products", "ads", "categories"})
+=======
+     * @Groups({"users", "products", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $id;
 
@@ -28,14 +32,22 @@ class Product
      *      max = 250,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+<<<<<<< HEAD
      * @Groups({"users", "products", "ads", "categories"})
+=======
+     * @Groups({"users", "products", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Url
+<<<<<<< HEAD
      * @Groups({"users", "products", "ads", "categories"})
+=======
+     * @Groups({"users", "products", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $picture;
 
@@ -46,7 +58,11 @@ class Product
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+<<<<<<< HEAD
      * @Groups({"users", "products", "ads", "categories"})
+=======
+     * @Groups({"users", "products", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $year;
 
@@ -57,7 +73,11 @@ class Product
      *      max = 50,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+<<<<<<< HEAD
      * @Groups({"users", "products", "ads", "categories"})
+=======
+     * @Groups({"users", "products", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $serie_number;
 
@@ -86,8 +106,12 @@ class Product
     private $updated_at;
 
     /**
+<<<<<<< HEAD
      * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products")
      * @ORM\JoinColumn(onDelete="CASCADE")
+=======
+     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"persist"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      * @Groups({"products"})
      */
     private $ad;

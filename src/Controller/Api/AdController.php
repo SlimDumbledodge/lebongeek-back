@@ -5,12 +5,13 @@ namespace App\Controller\Api;
 use App\Entity\Ad;
 use App\Repository\AdRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 class AdController extends AbstractController
@@ -23,7 +24,7 @@ class AdController extends AbstractController
      * @return JsonResponse
      */
     public function list(AdRepository $adRepository): JsonResponse
-    {
+    {        
         $ads = $adRepository->findAll();
 
         return $this->json($ads, Response::HTTP_OK, [], ["groups" => "ads"]);
@@ -37,9 +38,9 @@ class AdController extends AbstractController
      * @param integer $id
      * @return JsonResponse
      */
-    public function show(AdRepository $adRepository, int $id): JsonResponse
+    public function show(AdRepository $adRepository, Ad $ad): JsonResponse
     {
-        $ad = $adRepository->find($id);
+        // $ad = $adRepository->find($id);
 
         if (!$ad) {
             return $this->json([

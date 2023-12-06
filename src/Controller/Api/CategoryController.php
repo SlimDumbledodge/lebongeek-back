@@ -28,6 +28,7 @@ class CategoryController extends AbstractController
         return $this->json($categories, Response::HTTP_OK, [], ["groups" => "categories"]);
     }
 
+    
 
     /**
      * Get data from Category entity

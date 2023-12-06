@@ -18,20 +18,20 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "categories"})
+     * @Groups({"users", "products", "categories", "ads"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Groups({"users", "products", "categories"})
+     * @Groups({"users", "products", "categories", "ads"})
      */
     private $name;
     
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users", "products", "categories"})
+     * @Groups({"users", "products", "categories", "ads"})
      */
     private $image;
     
@@ -41,10 +41,17 @@ class Category
      */
     private $product;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="category", orphanRemoval=true)
+     * @Groups({"categories"})
+     */
+    private $ads;
+
 
     public function __construct()
     {
         $this->product = new ArrayCollection();
+        $this->ads = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -102,6 +109,36 @@ class Category
     public function setImage(string $image): self
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ad>
+     */
+    public function getAds(): Collection
+    {
+        return $this->ads;
+    }
+
+    public function addAd(Ad $ad): self
+    {
+        if (!$this->ads->contains($ad)) {
+            $this->ads[] = $ad;
+            $ad->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAd(Ad $ad): self
+    {
+        if ($this->ads->removeElement($ad)) {
+            // set the owning side to null (unless already changed)
+            if ($ad->getCategory() === $this) {
+                $ad->setCategory(null);
+            }
+        }
 
         return $this;
     }

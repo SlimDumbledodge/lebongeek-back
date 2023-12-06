@@ -18,7 +18,11 @@ class Ad
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+<<<<<<< HEAD
      * @Groups({"users", "ads", "products"})
+=======
+     * @Groups({"users", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $id;
 
@@ -30,7 +34,11 @@ class Ad
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
+<<<<<<< HEAD
      * @Groups({"users", "ads", "products"})
+=======
+     * @Groups({"users", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $description;
 
@@ -38,33 +46,49 @@ class Ad
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\NotBlank
      * @Assert\Positive
+<<<<<<< HEAD
      * @Groups({"users", "ads", "products"})
+=======
+     * @Groups({"users", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\NotBlank
+<<<<<<< HEAD
      * @Groups({"users", "ads", "products"})
+=======
+     * @Groups({"users", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $state;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
+<<<<<<< HEAD
      * @Groups({"users", "ads", "products"})
+=======
+     * @Groups({"users", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $location;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=false)
+<<<<<<< HEAD
      * @Groups({"users", "ads", "products"})
+=======
+     * @Groups({"users", "categories", "ads"})
+>>>>>>> 7940e1403944f848ce1dd967b88a7e17c32594a2
      */
     private $created_at;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"users", "ads"})
+     * @Groups({"users", "categories", "ads"})
      */
     private $updated_at;
 
@@ -79,6 +103,12 @@ class Ad
      * @Groups({"ads"})
      */
     private $products;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="ads")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $category;
 
     public function __construct()
     {
@@ -200,6 +230,18 @@ class Ad
                 $product->setAd(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
