@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Product;
+use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,22 +59,31 @@ class ProductController extends AbstractController
      * @param ValidatorInterface $validator
      * @return JsonResponse
      */
-    public function create(Request $request, ProductRepository $productRepository, SerializerInterface $serializer, ValidatorInterface $validator): JsonResponse
-    {   
+    public function create(Request $request, ProductRepository $productRepository, SerializerInterface $serializer, ValidatorInterface $validator, CategoryRepository $categoriesRepository): JsonResponse
+    {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
-        //recupere l'utilisateur connecté
-        $user = $this->getUser();
+
         try{
+            // je décode la saisie
+            $jsonData = json_decode($content, true);
             //deserialise le json en objet
             $product = $serializer->deserialize($content, Product::class, 'json');
-            $product->setCreatedAt(new \DateTimeImmutable());
-            $product->setUser($user);
-         
-        
-       
 
-    } catch (NotEncodableValueException $err) {
+            // je vérifie que la categorie est bien renseignée
+            if (!empty($jsonData['category']['id'])) {
+                // je récupère une catégorie grâce à l'id renseigné
+                $categoryId = $categoriesRepository->find($jsonData['category']['id']);
+                // j'assigne la catégorie au produit
+                $product->setCategory($categoryId);
+            } else {
+                // Si l'id de la catégorie n'est pas renseigné, alors je renvoie une erreur 400
+                return $this->json(["message" => "Veuillez associer votre produit à une catégorie"], Response::HTTP_BAD_REQUEST);
+            }
+            $product->setCreatedAt(new \DateTimeImmutable());
+            $product->setUser($this->getUser());
+
+    }   catch (NotEncodableValueException $err) {
         // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
         return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
     }

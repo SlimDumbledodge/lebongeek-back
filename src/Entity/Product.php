@@ -62,13 +62,14 @@ class Product
     private $serie_number;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product")
      * @Groups({"products", "ads"})
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"products", "ads"})
      */
     private $category;
