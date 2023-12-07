@@ -18,7 +18,7 @@ class Ad
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "ads", "products"})
+     * @Groups({"users", "ads", "products", "categories"})
      */
     private $id;
 
@@ -30,7 +30,7 @@ class Ad
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "ads", "products"})
+     * @Groups({"users", "ads", "products", "categories"})
      */
     private $description;
 
@@ -38,7 +38,7 @@ class Ad
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\NotBlank
      * @Assert\Positive
-     * @Groups({"users", "ads", "products"})
+     * @Groups({"users", "ads", "products", "categories"})
      */
     private $price;
 
@@ -52,13 +52,13 @@ class Ad
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users", "ads", "products"})
+     * @Groups({"users", "ads", "products", "categories"})
      */
     private $location;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=false)
-     * @Groups({"users", "ads", "products"})
+     * @Groups({"users", "ads", "products", "categories"})
      */
     private $created_at;
 

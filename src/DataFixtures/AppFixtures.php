@@ -92,7 +92,7 @@ class AppFixtures extends Fixture
 
         $adList = [];
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 40; $i++) {
 
             $ad = new Ad();
    
@@ -103,7 +103,7 @@ class AppFixtures extends Fixture
             $ad->setLocation($faker->city());
             $ad->setCreatedAt(new \DateTimeImmutable());
             $ad->setUser($faker->randomElement($userList));
-            $ad->setCategory($faker->randomElement($categoryList));            
+            $ad->setCategory($faker->randomElement($categoryList));
             
             $adList[] = $ad;
             
