@@ -6,7 +6,7 @@ class CategoryProvider
 {
     private $categories = [
         'Jeux video',
-        'figurines',
+        'Figurines',
         'Comics',
         'Mangas',
         'Bandes dessinées',
