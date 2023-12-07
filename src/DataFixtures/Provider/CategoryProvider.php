@@ -5,26 +5,26 @@ namespace App\DataFixtures\Provider;
 class CategoryProvider
 {
     private $categories = [
-        'Jeux video',
+        'Jeux-video',
         'Figurines',
         'Comics',
         'Mangas',
-        'Bandes dessinées',
+        'Bandes-dessinées',
         'Films/séries',
         'Gadget',
         'Cosplay',
         'Cartes',
         'Livres',
-        'Equipement de Gaming',
-        'Collection Rare et Vintage',
-        'Accessoires et Décoration',
-        'Maquettes et modélisme',
-        'Éditions Spéciales et Limitées',
-        'Art et Illustrations',
+        'Equipement-Gaming',
+        'Collection-Rare/Vintage',
+        'Accessoires-et-Décoration',
+        'Maquettes-et-modélisme',
+        'Éditions-Spéciales/Limitées',
+        'Art/Illustrations',
         'Musique',
-        'Objets connectés',
+        'Objets-connectés',
         'Jouets',
-        'Evènements Geek'
+        'Evènements-Geek'
     ];
 
     public function allCategories()
