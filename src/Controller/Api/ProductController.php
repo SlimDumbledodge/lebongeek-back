@@ -70,10 +70,12 @@ class ProductController extends AbstractController
         $user = $this->getUser();
         
         try{
-        //deserialise le json en objet
-        $product = $serializer->deserialize($content, Product::class, 'json');
-        $product->setCreatedAt(new \DateTimeImmutable());
-        $product->setUser($user);
+            //deserialise le json en objet
+            $product = $serializer->deserialize($content, Product::class, 'json');
+            $product->setCreatedAt(new \DateTimeImmutable());
+            $product->setUser($user);
+            $product->setCategory($product);
+            dd($product);
 
        
 

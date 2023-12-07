@@ -76,7 +76,7 @@ class Ad
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="ad")
-     * @Groups({"ads"})
+     * @Groups({"ads", "categories"})
      */
     private $products;
 

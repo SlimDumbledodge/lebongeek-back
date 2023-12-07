@@ -75,7 +75,7 @@ class Product
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=false)
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "ads", "categories"})
      */
     private $created_at;
 
