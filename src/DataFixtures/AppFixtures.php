@@ -50,13 +50,14 @@ class AppFixtures extends Fixture
             $user->setRoles(['ROLE_USER']);
             
             $userList[] = $user;
-            
+
             $manager->persist($user);
+
         }
 
         //! ADDRESS
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($j = 0; $j < 20; $j++) {
 
             $address = new Address();
 
@@ -66,7 +67,7 @@ class AppFixtures extends Fixture
             $address->setPostalCode($faker->postcode());
             $address->setCity($faker->city());
             $address->setCountry($faker->country());
-            $faker->randomElement($userList);
+            $address->setUser($faker->randomElement($userList));
 
             $manager->persist($address);
             
@@ -92,7 +93,7 @@ class AppFixtures extends Fixture
 
         $adList = [];
 
-        for ($i = 0; $i < 40; $i++) {
+        for ($k = 0; $k < 20; $k++) {
 
             $ad = new Ad();
    
@@ -102,9 +103,9 @@ class AppFixtures extends Fixture
             $ad->setState(rand(1,6));
             $ad->setLocation($faker->city());
             $ad->setCreatedAt(new \DateTimeImmutable());
-            $ad->setUser($faker->randomElement($userList));
             $ad->setCategory($faker->randomElement($categoryList));
-            
+            $ad->setUser($userList[$k]);
+
             $adList[] = $ad;
             
             $manager->persist($ad);
@@ -114,7 +115,7 @@ class AppFixtures extends Fixture
 
         $productList = [];
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($l = 0; $l < 20; $l++) {
 
             $product = new Product();
 
@@ -124,8 +125,8 @@ class AppFixtures extends Fixture
             $product->setSerieNumber(rand(100, 30000));
             $product->setCreatedAt(new \DateTimeImmutable());
             $product->setCategory($faker->randomElement($categoryList));
-            $product->setUser($faker->randomElement($userList));
-            $product->setAd($faker->unique->randomElement($adList));
+            $product->setUser($userList[$l]);
+            $product->setAd($adList[$l]);
             
             $productList[] = $product;
             
