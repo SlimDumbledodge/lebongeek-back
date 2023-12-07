@@ -12,6 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\DataFixtures\Provider\CategoryProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AppFixtures extends Fixture
 {
@@ -65,7 +66,7 @@ class AppFixtures extends Fixture
             $address->setPostalCode($faker->postcode());
             $address->setCity($faker->city());
             $address->setCountry($faker->country());
-            $address->setUser($faker->randomElement($userList));
+            $faker->randomElement($userList);
 
             $manager->persist($address);
             
@@ -102,10 +103,7 @@ class AppFixtures extends Fixture
             $ad->setLocation($faker->city());
             $ad->setCreatedAt(new \DateTimeImmutable());
             $ad->setUser($faker->randomElement($userList));
-            $ad->setCategory($faker->randomElement($categoryList));
-
-            // $ad->addProduct($faker->randomElement($productList));
-            
+            $ad->setCategory($faker->randomElement($categoryList));            
             
             $adList[] = $ad;
             
