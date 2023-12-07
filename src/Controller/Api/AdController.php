@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Ad;
 use App\Repository\AdRepository;
+use App\Repository\CategoryRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,14 +61,28 @@ class AdController extends AbstractController
      * @param ValidatorInterface $validator
      * @return JsonResponse
      */
-    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator): JsonResponse
+    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, CategoryRepository $categoriesRepository): JsonResponse
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
         
         try {
+            // je décode la saisie
+            $jsonData = json_decode($content, true);
             // converti le contenu de la requette en objet ad
             $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
+
+            // je vérifie que la categorie est bien renseignée
+            if (!empty($jsonData['category']['id'])) {
+                // je récupère une catégorie grâce à l'id renseigné
+                $categoryId = $categoriesRepository->find($jsonData['category']['id']);
+                // j'assigne la catégorie à l'annonce
+                $ad->setCategory($categoryId);
+            } else {
+                // Si l'id de la catégorie n'est pas renseigné, alors je renvoie une erreur 400
+                return $this->json(["message" => "Veuillez associer votre produit à une catégorie"], Response::HTTP_BAD_REQUEST);
+            }
+
             $ad->setCreatedAt(new \DateTimeImmutable());
             $ad->setUser($this->getUser());
 
