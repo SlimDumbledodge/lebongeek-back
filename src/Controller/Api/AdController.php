@@ -69,14 +69,9 @@ class AdController extends AbstractController
             // converti le contenu de la requette en objet ad
             $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
             $ad->setCreatedAt(new \DateTimeImmutable());
-<<<<<<< HEAD
             $ad->setUser($user);
             
         
-=======
-            $ad->setUser($this->getUser());
-            dd($ad);
->>>>>>> c00c707dfc20cab3edd42d903772abd1aa31aaf5
 
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur

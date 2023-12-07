@@ -59,20 +59,18 @@ class ProductController extends AbstractController
      * @return JsonResponse
      */
     public function create(Request $request, ProductRepository $productRepository, SerializerInterface $serializer, ValidatorInterface $validator): JsonResponse
-    {
+    {   
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
         //recupere l'utilisateur connecté
         $user = $this->getUser();
-        
         try{
             //deserialise le json en objet
             $product = $serializer->deserialize($content, Product::class, 'json');
             $product->setCreatedAt(new \DateTimeImmutable());
             $product->setUser($user);
-           /*  $product->setCategory($product);
-            dd($product); */
-
+         
+        
        
 
     } catch (NotEncodableValueException $err) {
