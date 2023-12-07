@@ -62,13 +62,14 @@ class Product
     private $serie_number;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product")
      * @Groups({"products", "ads"})
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product")
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"products", "ads"})
      */
     private $category;
@@ -86,11 +87,7 @@ class Product
     private $updated_at;
 
     /**
-<<<<<<< HEAD
-     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"persist"}, cascade={"remove"})
-=======
-     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products")
->>>>>>> c00c707dfc20cab3edd42d903772abd1aa31aaf5
+     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"remove"})
      * @Groups({"products"})
      */
     private $ad;
