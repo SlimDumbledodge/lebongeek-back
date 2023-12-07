@@ -99,7 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $product;
 
     /**
-     * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="user", cascade={"remove"})
      * @Groups({"users"})
      */
     private $ad;
