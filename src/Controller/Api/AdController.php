@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
@@ -35,13 +36,10 @@ class AdController extends AbstractController
      * 
      * @Route("/api/{id}/ads", name="app_api_ads_show", methods={"GET"})
      * @param AdRepository $adRepository
-     * @param integer $id
      * @return JsonResponse
      */
-    public function show(AdRepository $adRepository, Ad $ad): JsonResponse
+    public function show(Ad $ad): JsonResponse
     {
-        // $ad = $adRepository->find($id);
-
         if (!$ad) {
             return $this->json([
                 "error" => "Ad not found"
@@ -54,7 +52,8 @@ class AdController extends AbstractController
     /**
      * Create new data in Ad entity
      * 
-     * @Route("/api/ads", name="app_api_ads_create", methods={"POST"})
+     * @IsGranted("ROLE_USER")
+     * @Route("/api/ads", name="app_api_ads_new", methods={"POST"})
      * @param Request $request
      * @param AdRepository $adRepository
      * @param SerializerInterface $serializerInterface
@@ -70,9 +69,14 @@ class AdController extends AbstractController
             // converti le contenu de la requette en objet ad
             $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
             $ad->setCreatedAt(new \DateTimeImmutable());
+<<<<<<< HEAD
             $ad->setUser($user);
             
         
+=======
+            $ad->setUser($this->getUser());
+            dd($ad);
+>>>>>>> c00c707dfc20cab3edd42d903772abd1aa31aaf5
 
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
@@ -100,22 +104,18 @@ class AdController extends AbstractController
     /**
      * Edit data in Ad entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === ad.getUser()")
      * @Route("/api/{id}/ads", name="app_api_ads_update", methods={"PUT"})
      * @param Request $request
      * @param AdRepository $adRepository
      * @param SerializerInterface $serializerInterface
      * @param ValidatorInterface $validator
-     * @param integer $id
      * @return JsonResponse
      */
-    public function update(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
+    public function update(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, Ad $ad): JsonResponse
     {
-
-        // Récupérer l'article existant par son ID
-        $existingAd = $adRepository->find($id);
-            
         // Vérifier si l'article existe
-        if (!$existingAd) {
+        if (!$ad) {
             return $this->json(["error" => "Ad not found"], Response::HTTP_NOT_FOUND);
         }
 
@@ -142,16 +142,14 @@ class AdController extends AbstractController
             }  
 
             // Mettre à jour les propriétés de l'article existant avec les nouvelles données
-            $existingAd->setDescription($updatedAd->getDescription());
-            $existingAd->setPrice($updatedAd->getPrice());
-            $existingAd->setState($updatedAd->getState());
-            $existingAd->setLocation($updatedAd->getLocation());
-            $existingAd->setUpdatedAt(new \DateTimeImmutable());
-            $existingAd->setUser($updatedAd->getUser());
-            
+            $ad->setDescription($updatedAd->getDescription());
+            $ad->setPrice($updatedAd->getPrice());
+            $ad->setState($updatedAd->getState());
+            $ad->setLocation($updatedAd->getLocation());
+            $ad->setUpdatedAt(new \DateTimeImmutable());            
 
             // si il n'y a pas d'erreur, on enregistre l'objet Ad en base de données
-            $adRepository->add($existingAd,true);
+            $adRepository->add($ad,true);
             
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "Ad modified successfully"], Response::HTTP_OK);
@@ -160,14 +158,13 @@ class AdController extends AbstractController
     /**
      * Delete data from Ad entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === ad.getUser()")
      * @Route("/api/{id}/ads", name="app_api_ads_delete", methods={"DELETE"})
      * @param AdRepository $adRepository
-     * @param integer $id
      * @return JsonResponse
      */
-    public function delete(AdRepository $adRepository, int $id): JsonResponse
+    public function delete(AdRepository $adRepository, Ad $ad): JsonResponse
     {
-        $ad = $adRepository->find($id);
         // si l'utilisateur n'existe pas, on retourne une reponse 404
         if (!$ad) {
             return $this->json(["error" => "ad not found"], Response::HTTP_NOT_FOUND);

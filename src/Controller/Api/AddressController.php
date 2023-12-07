@@ -4,19 +4,22 @@ namespace App\Controller\Api;
 
 use App\Entity\Address;
 use App\Repository\AddressRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AddressController extends AbstractController
 {
     /**
      * Get all data from Address entity
      * 
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/api/addresses", name="app_api_addresses", methods={"GET"})
      * @param AddressRepository $addressRepository
      * @return JsonResponse
@@ -31,14 +34,13 @@ class AddressController extends AbstractController
     /**
      * Get data from Address entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === address.getUser()")
      * @Route("/api/{id}/addresses", name="app_api_addresses_show", methods={"GET"})
      * @param AddressRepository $addressRepository
-     * @param integer $id
      * @return JsonResponse
      */
-    public function show(AddressRepository $addressRepository, int $id): JsonResponse
+    public function show(Address $address): JsonResponse
     {
-        $address = $addressRepository->find($id);
 
         if (!$address) {
             return $this->json([
@@ -52,6 +54,7 @@ class AddressController extends AbstractController
     /**
      * Create new data in Address entity
      * 
+     * @IsGranted("ROLE_USER")
      * @Route("/api/addresses", name="app_api_addresses_new", methods={"POST"})
      * @param Request $request
      * @param AddressRepository $addressRepository
@@ -67,6 +70,7 @@ class AddressController extends AbstractController
         try {
             // converti le contenu de la requette en objet address
             $address = $serializerInterface->deserialize($content, Address::class, 'json');
+<<<<<<< HEAD
             $address->setUser($user);
             // $address->setNameAddress($address->getNameAddress());
             // $address->setStreetNumber($address->getStreetNumber());
@@ -75,6 +79,9 @@ class AddressController extends AbstractController
             // $address->setCity($address->getCity());
             // $address->setCountry($address->getCountry());
             // $address->user->setId($address->user->getUser());
+=======
+            $address->setUser($this->getUser());
+>>>>>>> c00c707dfc20cab3edd42d903772abd1aa31aaf5
 
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
@@ -93,7 +100,6 @@ class AddressController extends AbstractController
             }
             // si il n'y a pas d'erreur, on enregistre l'objet address en base de données
             $addressRepository->add($address,true);
-            
         
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "address created successfully"], Response::HTTP_CREATED);
@@ -102,22 +108,18 @@ class AddressController extends AbstractController
     /**
      * Edit data in Address entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === address.getUser()")
      * @Route("/api/{id}/addresses", name="app_api_addresses_update", methods={"PUT"})
      * @param Request $request
      * @param AddressRepository $addressRepository
      * @param SerializerInterface $serializerInterface
      * @param ValidatorInterface $validator
-     * @param integer $id
      * @return JsonResponse
      */
-    public function update(Request $request, AddressRepository $addressRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id): JsonResponse
+    public function update(Request $request, AddressRepository $addressRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, Address $address): JsonResponse
     {
-
-        // Récupérer l'utilisateur existant par son ID
-        $existingAddress = $addressRepository->find($id);
-            
         // Vérifier si l'utilisateur existe
-        if (!$existingAddress) {
+        if (!$address) {
             return $this->json(["error" => "Address not found"], Response::HTTP_NOT_FOUND);
         }
 
@@ -144,16 +146,16 @@ class AddressController extends AbstractController
             }  
 
             // Mettre à jour les propriétés de l'adresse existant avec les nouvelles données
-            $existingAddress->setNameAddress($updatedAddress->getNameAddress());
-            $existingAddress->setStreetNumber($updatedAddress->getStreetNumber());
-            $existingAddress->setStreet($updatedAddress->getStreet());
-            $existingAddress->setPostalCode($updatedAddress->getPostalCode());
-            $existingAddress->setCity($updatedAddress->getCity());
-            $existingAddress->setCountry($updatedAddress->getCountry());
+            $address->setNameAddress($updatedAddress->getNameAddress());
+            $address->setStreetNumber($updatedAddress->getStreetNumber());
+            $address->setStreet($updatedAddress->getStreet());
+            $address->setPostalCode($updatedAddress->getPostalCode());
+            $address->setCity($updatedAddress->getCity());
+            $address->setCountry($updatedAddress->getCountry());
             
 
             // si il n'y a pas d'erreur, on enregistre l'objet Address en base de données
-            $addressRepository->add($existingAddress,true);
+            $addressRepository->add($address,true);
             
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "Address modified successfully"], Response::HTTP_OK);
@@ -162,14 +164,13 @@ class AddressController extends AbstractController
     /**
      * Delete data from Address entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === address.getUser()")
      * @Route("/api/{id}/addresses", name="app_api_addresses_delete", methods={"DELETE"})
      * @param AddressRepository $addressRepository
-     * @param integer $id
      * @return JsonResponse
      */
-    public function delete(AddressRepository $addressRepository, int $id): JsonResponse
+    public function delete(AddressRepository $addressRepository, Address $address): JsonResponse
     {
-        $address = $addressRepository->find($id);
         // si l'adresse n'existe pas, on retourne une reponse 404
         if (!$address) {
             return $this->json(["error" => "Address not found"], Response::HTTP_NOT_FOUND);

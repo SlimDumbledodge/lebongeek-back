@@ -10,6 +10,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
@@ -28,20 +30,15 @@ class CategoryController extends AbstractController
         return $this->json($categories, Response::HTTP_OK, [], ["groups" => "categories"]);
     }
 
-    
-
     /**
      * Get data from Category entity
      * 
      * @Route("/api/{id}/categories", name="app_api_category_show", methods={"GET"})
      * @param CategoryRepository $categoryRepository
-     * @param integer $id
      * @return JsonResponse
      */
-    public function show(CategoryRepository $categoryRepository, int $id): JsonResponse
+    public function show(Category $category): JsonResponse
     {
-        $category = $categoryRepository->find($id);
-
         if (!$category) {
             return $this->json([
                 "error" => "Category not found"
@@ -51,11 +48,10 @@ class CategoryController extends AbstractController
         return $this->json($category, Response::HTTP_OK, [], ["groups" => "categories"]);
     }
 
-
-
     /**
      * Create new data in Category entity
      * 
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/api/categories", name="app_api_category_create", methods={"POST"})
      * @param Request $request
      * @param CategoryRepository $categoryRepository
@@ -90,23 +86,21 @@ class CategoryController extends AbstractController
         return $this->json(["message" => "Category created successfully"], Response::HTTP_CREATED);
     }
 
-
     /**
      * Edit data in Category entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === category.getUser()")
      * @Route("/api/{id}/categories", name="app_api_category_update", methods={"PUT"})
      * @param Request $request
      * @param CategoryRepository $categoryRepository
      * @param SerializerInterface $serializer
      * @param ValidatorInterface $validator
-     * @param integer $id
      * @return void
      */
-    public function update(Request $request, CategoryRepository $categoryRepository, SerializerInterface $serializer, ValidatorInterface $validator, int $id)
+    public function update(Request $request, CategoryRepository $categoryRepository, SerializerInterface $serializer, ValidatorInterface $validator, Category $category)
     {
-        $existingCategory = $categoryRepository->find($id);
 
-        if (!$existingCategory) {
+        if (!$category) {
             return $this->json(["error" => "Category not found"], Response::HTTP_NOT_FOUND);
         }
 
@@ -114,6 +108,7 @@ class CategoryController extends AbstractController
 
         try{
             $updatedCategory = $serializer->deserialize($content, Category::class, 'json');
+
         } catch (NotEncodableValueException $err) {
             // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
             return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
@@ -130,10 +125,10 @@ class CategoryController extends AbstractController
             return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
-        $existingCategory->setName($updatedCategory->getName());
-        $existingCategory->setImage($updatedCategory->getImage());
+        $category->setName($updatedCategory->getName());
+        $category->setImage($updatedCategory->getImage());
 
-        $categoryRepository->add($existingCategory, true);
+        $categoryRepository->add($category, true);
 
         return $this->json(["message" => "Category updated successfully"], Response::HTTP_OK);
     }
@@ -141,20 +136,19 @@ class CategoryController extends AbstractController
     /**
      * Delete data from Category entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === category.getUser()")
      * @Route("/api/{id}/categories", name="app_api_category_delete", methods={"DELETE"})
      * @param CategoryRepository $categoryRepository
-     * @param integer $id
      * @return void
      */
-    public function delete(CategoryRepository $categoryRepository, int $id)
+    public function delete(CategoryRepository $categoryRepository, Category $category)
     {
-        $existingCategory = $categoryRepository->find($id);
 
-        if (!$existingCategory) {
+        if (!$category) {
             return $this->json(["error" => "Category not found"], Response::HTTP_NOT_FOUND);
         }
 
-        $categoryRepository->remove($existingCategory, true);
+        $categoryRepository->remove($category, true);
         return $this->json(["message" => "Category deleted successfully"], Response::HTTP_OK);
     }
 

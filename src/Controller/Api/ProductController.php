@@ -10,6 +10,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
@@ -28,21 +30,15 @@ class ProductController extends AbstractController
         return $this->json($products, Response::HTTP_OK, [], ["groups" => "products"]);
     }
 
-
-
     /**
      * Get data from Product entity
      * 
      * @Route("/api/{id}/products", name="app_api_product_show", methods={"GET"})
      * @param ProductRepository $productRepository
-     * @param integer $id
      * @return JsonResponse
      */
-    public function show(ProductRepository $productRepository, int $id): JsonResponse
+    public function show(Product $product): JsonResponse
     {
-    
-        $product = $productRepository->find($id);
-
         if (!$product) {
             return $this->json([
                 "error" => "Product not found"
@@ -51,10 +47,10 @@ class ProductController extends AbstractController
         return $this->json($product, Response::HTTP_OK, [], ["groups" => "products"]);
     }
 
-
     /**
      * Create new data in Product entity
      * 
+     * @IsGranted("ROLE_USER")
      * @Route("/api/products", name="app_api_product_new", methods={"POST"})
      * @param Request $request
      * @param ProductRepository $productRepository
@@ -74,8 +70,8 @@ class ProductController extends AbstractController
             $product = $serializer->deserialize($content, Product::class, 'json');
             $product->setCreatedAt(new \DateTimeImmutable());
             $product->setUser($user);
-            $product->setCategory($product);
-            dd($product);
+           /*  $product->setCategory($product);
+            dd($product); */
 
        
 
@@ -83,6 +79,7 @@ class ProductController extends AbstractController
         // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
         return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
     }
+
     //valide l'objet
     $errors = $validator->validate($product);
     //si il y a des erreurs
@@ -95,36 +92,30 @@ class ProductController extends AbstractController
         //on retourne les erreurs
         return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
     }
-    $productRepository->add($product, true);
+        $productRepository->add($product, true);
 
-    return $this->json(["message" => "Product created successfully"], Response::HTTP_CREATED);
+        return $this->json(["message" => "Product created successfully"], Response::HTTP_CREATED);
     }
-
 
     /**
      * Edit data in Product entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === product.getUser()")
      * @Route("/api/{id}/products", name="app_api_product_update", methods={"PUT"})
      * @param Request $request
      * @param ProductRepository $productRepository
      * @param SerializerInterface $serializerInterface
      * @param ValidatorInterface $validator
-     * @param integer $id
      * @return void
      */
-    public function update(Request $request, ProductRepository $productRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, int $id){
-
-        // Récupérer l'utilisateur existant par son ID
-        $existingProduct = $productRepository->find($id);
-            
+    public function update(Request $request, ProductRepository $productRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, Product $product)
+    {
         // Vérifier si l'utilisateur existe
-        if (!$existingProduct) {
+        if (!$product) {
             return $this->json(["error" => "Product not found"], Response::HTTP_NOT_FOUND);
         }
-
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
-
         try {
             // converti le contenu de la requette en objet User
             $updatedProduct = $serializerInterface->deserialize($content, Product::class, 'json');
@@ -133,31 +124,30 @@ class ProductController extends AbstractController
             // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
             return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
         }
-            // valide l'objet User (permet de vérifier les assert de l'entité)
-            $errors = $validator->validate($updatedProduct);
-            // si il y a des erreurs, on les retourne
-            if (count($errors) > 0) {
-                $dataErrors = [];
-            foreach($errors as $error){
-                // ici je met le nom du champs en index et le message d'erreur en valeur
-                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
-            }
-                return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-            }  
 
-            // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
-            $existingProduct->setTitle($updatedProduct->getTitle());
-            $existingProduct->setPicture($updatedProduct->getPicture());
-            $existingProduct->setYear($updatedProduct->getYear());
-            $existingProduct->setSerieNumber($updatedProduct->getSerieNumber());
-            $existingProduct->setCategory($updatedProduct->getCategory());
-            $existingProduct->setUpdatedAt(new \DateTimeImmutable());
+        // valide l'objet User (permet de vérifier les assert de l'entité)
+        $errors = $validator->validate($updatedProduct);
+        // si il y a des erreurs, on les retourne
+        if (count($errors) > 0) {
+            $dataErrors = [];
+        foreach($errors as $error){
+            // ici je met le nom du champs en index et le message d'erreur en valeur
+            $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+        }
+            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }  
 
-            
+        // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
+        $product->setTitle($updatedProduct->getTitle());
+        $product->setPicture($updatedProduct->getPicture());
+        $product->setYear($updatedProduct->getYear());
+        $product->setSerieNumber($updatedProduct->getSerieNumber());
+        $product->setCategory($updatedProduct->getCategory());
+        $product->setUpdatedAt(new \DateTimeImmutable());
 
-            // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
-            $productRepository->add($existingProduct,true);
-            
+        // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
+        $productRepository->add($product,true);
+
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "Product modified successfully"], Response::HTTP_OK);
     }
@@ -165,23 +155,20 @@ class ProductController extends AbstractController
     /**
      * Delete data from Product entity
      * 
+     * @Security("is_granted('ROLE_USER') and user === product.getUser()")
      * @Route("/api/{id}/products", name="app_api_product_delete", methods={"DELETE"})
      * @param Request $request
      * @param ProductRepository $productRepository
-     * @param integer $id
      * @return JsonResponse
      */
-    public function delete(Request $request, ProductRepository $productRepository, int $id): JsonResponse
-    {
-        // Récupérer l'utilisateur existant par son ID
-        $existingProduct = $productRepository->find($id);
-            
+    public function delete(ProductRepository $productRepository, Product $product): JsonResponse
+    {            
         // Vérifier si l'utilisateur existe
-        if (!$existingProduct) {
+        if (!$product) {
             return $this->json(["error" => "Product not found"], Response::HTTP_NOT_FOUND);
         }
 
-        $productRepository->remove($existingProduct, true);
+        $productRepository->remove($product, true);
 
         return $this->json(["message" => "Product deleted successfully"], Response::HTTP_OK);
     }
