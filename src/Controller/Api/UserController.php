@@ -38,18 +38,8 @@ class UserController extends AbstractController
      * @param UserRepository $userRepository
      * @return JsonResponse
      */
-    public function show(UserRepository $userRepository, User $user): JsonResponse
+    public function show(User $user): JsonResponse
     {
-        // $this->denyAccessUnlessGranted('ROLE_USER');
-        
-        // $user = $userRepository->find($id);
-
-        // if ($user !== $this->getUser()) {
-        //     dd("Tu fais quoi !?");
-        // } else {
-        //     dd("T le boss !");
-        // }
-
         if (!$user) {
             return $this->json([
                 "error" => "User not found"
@@ -155,7 +145,6 @@ class UserController extends AbstractController
             $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
             $loggedUser->setDescription($updatedUser->getDescription() ?? 'Je n\'ai pas de description');
             
-
             // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
             $userRepository->add($loggedUser,true);
             

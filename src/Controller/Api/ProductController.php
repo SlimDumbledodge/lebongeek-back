@@ -39,12 +39,6 @@ class ProductController extends AbstractController
      */
     public function show(Product $product): JsonResponse
     {
-<<<<<<< HEAD
-=======
-    
-        $product = $productRepository->find($id);
-
->>>>>>> a92e367cf7d12df2f1efb07a0c40304545c7be99
         if (!$product) {
             return $this->json([
                 "error" => "Product not found"

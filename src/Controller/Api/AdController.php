@@ -70,6 +70,7 @@ class AdController extends AbstractController
             $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
             $ad->setCreatedAt(new \DateTimeImmutable());
             $ad->setUser($this->getUser());
+            dd($ad);
 
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
