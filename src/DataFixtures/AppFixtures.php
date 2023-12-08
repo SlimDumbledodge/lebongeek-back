@@ -12,7 +12,6 @@ use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\DataFixtures\Provider\CategoryProvider;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AppFixtures extends Fixture
 {
