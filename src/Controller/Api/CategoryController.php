@@ -51,7 +51,7 @@ class CategoryController extends AbstractController
     /**
      * Create new data in Category entity
      * 
-     * 
+     * @Security("is_granted('ROLE_ADMIN') and user === category.getUser()") 
      * @Route("/api/categories", name="app_api_category_create", methods={"POST"})
      * @param Request $request
      * @param CategoryRepository $categoryRepository
@@ -89,7 +89,7 @@ class CategoryController extends AbstractController
     /**
      * Edit data in Category entity
      * 
-     * @Security("is_granted('ROLE_USER') and user === category.getUser()")
+     * @Security("is_granted('ROLE_ADMIN') and user === category.getUser()")
      * @Route("/api/{id}/categories", name="app_api_category_update", methods={"PUT"})
      * @param Request $request
      * @param CategoryRepository $categoryRepository
@@ -136,7 +136,7 @@ class CategoryController extends AbstractController
     /**
      * Delete data from Category entity
      * 
-     * @Security("is_granted('ROLE_USER') and user === category.getUser()")
+     * @Security("is_granted('ROLE_ADMIN') and user === category.getUser()")
      * @Route("/api/{id}/categories", name="app_api_category_delete", methods={"DELETE"})
      * @param CategoryRepository $categoryRepository
      * @return void
