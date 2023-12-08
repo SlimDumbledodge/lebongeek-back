@@ -66,14 +66,13 @@ class AdController extends AbstractController
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
-
+        
         try {
-
             // je décode la saisie
             $jsonData = json_decode($content, true);
             // converti le contenu de la requette en objet ad
             $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
-            
+
             // je vérifie que la categorie est bien renseignée
             if (!empty($jsonData['category']['id'])) {
                 // je récupère une catégorie grâce à l'id renseigné
