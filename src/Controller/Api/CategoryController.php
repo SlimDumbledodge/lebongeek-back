@@ -51,7 +51,7 @@ class CategoryController extends AbstractController
     /**
      * Create new data in Category entity
      * 
-     * @IsGranted("ROLE_ADMIN")
+     * 
      * @Route("/api/categories", name="app_api_category_create", methods={"POST"})
      * @param Request $request
      * @param CategoryRepository $categoryRepository
