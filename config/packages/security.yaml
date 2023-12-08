@@ -42,7 +42,7 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/api/users, roles: ROLE_USER }
         # - { path: ^/api/users, methods: POST, roles: ROLE_ADMIN }
-        - { path: ^/api, methods: [PUT,DELETE], roles: ROLE_USER }
+        - { path: ^/api, methods: [POST,PUT,DELETE], roles: ROLE_USER }
         
         
 
