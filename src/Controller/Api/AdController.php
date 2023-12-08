@@ -3,9 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Ad;
-use App\Entity\Product;
 use App\Repository\AdRepository;
-use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,19 +61,17 @@ class AdController extends AbstractController
      * @param ValidatorInterface $validator
      * @return JsonResponse
      */
-    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, CategoryRepository $categoriesRepository, ProductRepository $productRepository): JsonResponse
+    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, CategoryRepository $categoriesRepository): JsonResponse
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
-
+        
         try {
-
             // je décode la saisie
             $jsonData = json_decode($content, true);
-
             // converti le contenu de la requette en objet ad
             $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
-            
+
             // je vérifie que la categorie est bien renseignée
             if (!empty($jsonData['category']['id'])) {
                 // je récupère une catégorie grâce à l'id renseigné
@@ -84,15 +80,7 @@ class AdController extends AbstractController
                 $ad->setCategory($categoryId);
             } else {
                 // Si l'id de la catégorie n'est pas renseigné, alors je renvoie une erreur 400
-                return $this->json(["message" => "Veuillez associer votre produit à une catégorie"], Response::HTTP_BAD_REQUEST);
-            }
-
-            if (!empty($jsonData['products'])) {
-                $product = new Product();
-                dd($ad->getProducts()[0]->getTitle());
-                $product->setTitle($ad->getProducts()[0]->getTitle());
-                $product->setCreatedAt(new \DateTimeImmutable());
-                $product->setCategory($categoryId);
+                return $this->json(["message" => "Veuillez associer votre annonce à une catégorie"], Response::HTTP_BAD_REQUEST);
             }
 
             $ad->setCreatedAt(new \DateTimeImmutable());
@@ -114,8 +102,7 @@ class AdController extends AbstractController
                 return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
             // si il n'y a pas d'erreur, on enregistre l'objet ad en base de données
-            $adRepository->add($ad, true);
-            // $productRepository->add($product, true);
+            $adRepository->add($ad,true);
             
         
         // si tout s'est bien passé, on retourne une reponse 200

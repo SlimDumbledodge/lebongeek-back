@@ -34,7 +34,7 @@ class AppFixtures extends Fixture
 
         $userList = [];
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 40; $i++) {
 
             $user = new User();
 
@@ -92,7 +92,7 @@ class AppFixtures extends Fixture
 
         $adList = [];
 
-        for ($k = 0; $k < 20; $k++) {
+        for ($k = 0; $k < 40; $k++) {
 
             $ad = new Ad();
    
@@ -114,7 +114,7 @@ class AppFixtures extends Fixture
 
         $productList = [];
 
-        for ($l = 0; $l < 20; $l++) {
+        for ($l = 0; $l < 40; $l++) {
 
             $product = new Product();
 
