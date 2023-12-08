@@ -5,7 +5,6 @@ namespace App\Controller\Api;
 use App\Entity\Ad;
 use App\Entity\Product;
 use App\Repository\AdRepository;
-use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,7 +62,7 @@ class AdController extends AbstractController
      * @param ValidatorInterface $validator
      * @return JsonResponse
      */
-    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, CategoryRepository $categoriesRepository, ProductRepository $productRepository): JsonResponse
+    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, CategoryRepository $categoriesRepository): JsonResponse
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
@@ -72,7 +71,6 @@ class AdController extends AbstractController
 
             // je décode la saisie
             $jsonData = json_decode($content, true);
-
             // converti le contenu de la requette en objet ad
             $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
             
@@ -88,15 +86,17 @@ class AdController extends AbstractController
             }
 
             if (!empty($jsonData['products'])) {
-                $product = new Product();
-                dd($ad->getProducts()[0]->getTitle());
-                $product->setTitle($ad->getProducts()[0]->getTitle());
-                $product->setCreatedAt(new \DateTimeImmutable());
-                $product->setCategory($categoryId);
-            }
 
-            $ad->setCreatedAt(new \DateTimeImmutable());
-            $ad->setUser($this->getUser());
+                $product = new Product();
+
+                $product->setTitle($ad->getProducts()[0]->getTitle());
+                $product->setPicture($ad->getProducts()[0]->getPicture()) ?? null;
+                $product->setYear($ad->getProducts()[0]->getYear()) ?? null;
+                $product->setSerieNumber($ad->getProducts()[0]->getSerieNumber()) ?? null;
+                $product->setCategory($categoryId);
+                $product->setUser($this->getUser());
+                $product->setCreatedAt(new \DateTimeImmutable());
+            }
 
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
@@ -113,11 +113,15 @@ class AdController extends AbstractController
             }
                 return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
+
+            $ad->addProduct($product);
+            $ad->setUser($this->getUser());
+            $ad->setCreatedAt(new \DateTimeImmutable());
+            // dd($jsonData['category']['id']);
+
             // si il n'y a pas d'erreur, on enregistre l'objet ad en base de données
             $adRepository->add($ad, true);
-            // $productRepository->add($product, true);
             
-        
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "ad created successfully"], Response::HTTP_CREATED);
     }

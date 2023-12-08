@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -171,6 +172,20 @@ class UserController extends AbstractController
         $userRepository->remove($loggedUser, true);
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User deleted successfully"], Response::HTTP_OK);
+    }
+
+    /**
+     * Get the logged user
+     * 
+     * @IsGranted("ROLE_USER")
+     * @Route("/api/get_user", name="app_api_current_user", methods={"GET"})
+     * @return void
+     */
+    public function getCurrentUser()
+    {
+        $currentUser = $this->getUser();
+        
+        return $this->json($currentUser, Response::HTTP_OK, [], ["groups" => "users"]);
     }
 
 }

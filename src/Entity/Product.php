@@ -51,7 +51,7 @@ class Product
     private $year;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      * @Assert\Length(
      *      min = 3,
      *      max = 50,

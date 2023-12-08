@@ -76,6 +76,7 @@ class Ad
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="ad", cascade={"remove", "persist"})
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"ads", "categories"})
      */
     private $products;
