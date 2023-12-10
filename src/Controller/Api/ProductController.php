@@ -102,7 +102,7 @@ class ProductController extends AbstractController
     }
         $productRepository->add($product, true);
 
-        return $this->json(["message" => "Product created successfully"], Response::HTTP_CREATED);
+        return $this->json(["message" => "Product created successfully", "productId" => $product->getId()], Response::HTTP_CREATED);
     }
 
     /**
@@ -179,6 +179,24 @@ class ProductController extends AbstractController
         $productRepository->remove($product, true);
 
         return $this->json(["message" => "Product deleted successfully"], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/last_product", name="app_api_last_product", methods={"GET"})
+     *
+     * @param ProductRepository $productRepository
+     * @return void
+     */
+    public function lastUserProduct(ProductRepository $productRepository)
+    {
+        $lastProducts = $productRepository->findLastAddedValueById($this->getUser());
+
+        $productsUser = [];
+        foreach($lastProducts as $lastProduct){
+            $productsUser[] = $lastProduct['id'];
+        }
+
+        return $this->json(end($lastProduct), Response::HTTP_OK, [], ["groups" => "users"]);
     }
 }
 
