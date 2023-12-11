@@ -84,7 +84,7 @@ class Ad
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="ads", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"ads", "categories"})
+     * @Groups({"ads"})
      */
     private $category;
 

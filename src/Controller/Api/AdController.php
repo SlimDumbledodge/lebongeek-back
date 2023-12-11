@@ -77,9 +77,9 @@ class AdController extends AbstractController
             // je vérifie que la categorie est bien renseignée
             if (!empty($jsonData['category']['id'])) {
                 // je récupère une catégorie grâce à l'id renseigné
-                $categoryId = $categoriesRepository->find($jsonData['category']['id']);
+                $category = $categoriesRepository->find($jsonData['category']['id']);
                 // j'assigne la catégorie à l'annonce
-                $ad->setCategory($categoryId);
+                $ad->setCategory($category);
             } else {
                 // Si l'id de la catégorie n'est pas renseigné, alors je renvoie une erreur 400
                 return $this->json(["message" => "Veuillez associer votre produit à une catégorie"], Response::HTTP_BAD_REQUEST);
