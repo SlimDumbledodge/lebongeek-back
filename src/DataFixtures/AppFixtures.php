@@ -102,7 +102,7 @@ class AppFixtures extends Fixture
             $ad->setState(rand(1,6));
             $ad->setLocation($faker->city());
             $ad->setCreatedAt(new \DateTimeImmutable());
-            // $ad->setCategory($faker->randomElement($categoryList));
+            $ad->setCategory($faker->randomElement($categoryList));
             $ad->setUser($userList[$k]);
 
             $adList[] = $ad;
