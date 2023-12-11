@@ -59,7 +59,7 @@ class Product
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "products", "ads", "categories"})
      */
-    private $serie_number;
+    private $serial_number;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product")
@@ -82,13 +82,13 @@ class Product
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "ads", "categories"})
      */
     private $updated_at;
 
     /**
      * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"remove"})
-     * @Groups({"products"})
+     * @Groups({"products", "categories"})
      */
     private $ad;
 
@@ -133,14 +133,14 @@ class Product
         return $this;
     }
 
-    public function getSerieNumber(): ?int
+    public function getSerialNumber(): ?string
     {
-        return $this->serie_number;
+        return $this->serial_number;
     }
 
-    public function setSerieNumber(?int $serie_number): self
+    public function setSerialNumber(?string $serial_number): self
     {
-        $this->serie_number = $serie_number;
+        $this->serial_number = $serial_number;
 
         return $this;
     }

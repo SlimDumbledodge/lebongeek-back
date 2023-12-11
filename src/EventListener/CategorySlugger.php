@@ -15,12 +15,12 @@ class CategorySlugger
         $this->slugger = $slugger;
     }
 
-    public function prePersist(Category $category, LifecycleEventArgs $event)
+    public function prePersist(Category $category)
     {
         $this->slugifyName($category);
     }
 
-    public function preUpdate(Category $category, LifecycleEventArgs $event)
+    public function preUpdate(Category $category)
     {
         $this->slugifyName($category);
     }

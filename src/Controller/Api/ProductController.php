@@ -149,7 +149,7 @@ class ProductController extends AbstractController
         $product->setTitle($updatedProduct->getTitle());
         $product->setPicture($updatedProduct->getPicture());
         $product->setYear($updatedProduct->getYear());
-        $product->setSerieNumber($updatedProduct->getSerieNumber());
+        $product->setSerialNumber($updatedProduct->getSerieNumber());
         $product->setCategory($updatedProduct->getCategory());
         $product->setUpdatedAt(new \DateTimeImmutable());
 

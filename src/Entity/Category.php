@@ -18,37 +18,37 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "categories", "ads"})
+     * @Groups({"users", "products", "categories", "ads", "onlyCategories"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Groups({"users", "products", "categories", "ads"})
+     * @Groups({"users", "products", "categories", "ads", "onlyCategories"})
      */
     private $name;
     
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users", "products", "categories", "ads"})
+     * @Groups({"users", "products", "categories", "ads", "onlyCategories"})
      */
     private $image;
     
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="category")
+     * @Groups({"categories"})
      */
     private $product;
 
     /**
      * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="category", orphanRemoval=true)
-     * @Groups({"categories"})
      */
     private $ads;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"categories"})
+     * @Groups({"categories", "onlyCategories"})
      */
     private $slug;
 

@@ -121,7 +121,7 @@ class AppFixtures extends Fixture
             $product->setTitle($faker->title());
             $product->setPicture($faker->imageUrl(640, 480, 'dogs'));
             $product->setYear($faker->year());
-            $product->setSerieNumber(rand(100, 30000));
+            $product->setSerialNumber(rand(100, 30000));
             $product->setCreatedAt(new \DateTimeImmutable());
             $product->setCategory($faker->randomElement($categoryList));
             $product->setUser($userList[$l]);
