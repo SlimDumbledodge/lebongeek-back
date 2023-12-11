@@ -45,7 +45,7 @@ class Ad
     /**
      * @ORM\Column(type="integer", nullable=false)
      * @Assert\NotBlank
-     * @Groups({"users", "ads", "products"})
+     * @Groups({"users", "ads", "products", "categories"})
      */
     private $state;
 
@@ -84,7 +84,7 @@ class Ad
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="ads", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"ads", "categories"})
+     * @Groups({"ads"})
      */
     private $category;
 
