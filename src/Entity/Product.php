@@ -59,7 +59,7 @@ class Product
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "products", "ads", "categories"})
      */
-    private $serie_number;
+    private $serial_number;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product")
@@ -133,14 +133,14 @@ class Product
         return $this;
     }
 
-    public function getSerieNumber(): ?int
+    public function getSerialNumber(): ?int
     {
-        return $this->serie_number;
+        return $this->serial_number;
     }
 
-    public function setSerieNumber(?int $serie_number): self
+    public function setSerialNumber(?int $serial_number): self
     {
-        $this->serie_number = $serie_number;
+        $this->serial_number = $serial_number;
 
         return $this;
     }

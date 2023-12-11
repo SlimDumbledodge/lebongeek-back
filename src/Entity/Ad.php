@@ -81,12 +81,7 @@ class Ad
      */
     private $products;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="ads", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"ads"})
-     */
-    private $category;
+
 
     public function __construct()
     {
@@ -212,15 +207,5 @@ class Ad
         return $this;
     }
 
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): self
-    {
-        $this->category = $category;
-
-        return $this;
-    }
+   
 }

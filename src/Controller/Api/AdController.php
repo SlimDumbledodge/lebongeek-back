@@ -63,7 +63,7 @@ class AdController extends AbstractController
      * @param ValidatorInterface $validator
      * @return JsonResponse
      */
-    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, CategoryRepository $categoriesRepository): JsonResponse
+    public function create(Request $request, AdRepository $adRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, CategoryRepository $categoriesRepository, ProductRepository $productRepository): JsonResponse
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
@@ -74,18 +74,15 @@ class AdController extends AbstractController
             // converti le contenu de la requette en objet ad
             $ad = $serializerInterface->deserialize($content, Ad::class, 'json');
 
+            $ad->setUser($this->getUser());
+            $ad->setCreatedAt(new \DateTimeImmutable());
             // je vérifie que la categorie est bien renseignée
             if (!empty($jsonData['category']['id'])) {
                 // je récupère une catégorie grâce à l'id renseigné
                 $categoryId = $categoriesRepository->find($jsonData['category']['id']);
-                // j'assigne la catégorie à l'annonce
-                $ad->setCategory($categoryId);
-                $ad->setUser($this->getUser());
-                $ad->setCreatedAt(new \DateTimeImmutable());
-            } else {
-                // Si l'id de la catégorie n'est pas renseigné, alors je renvoie une erreur 400
-                return $this->json(["message" => "Veuillez associer votre produit à une catégorie"], Response::HTTP_BAD_REQUEST);
-            }
+                
+                
+            
 
             if (!empty($jsonData['products'])) {
 
@@ -94,13 +91,14 @@ class AdController extends AbstractController
                 $newProduct->setTitle($ad->getProducts()[0]->getTitle());
                 $newProduct->setPicture($ad->getProducts()[0]->getPicture()) ?? null;
                 $newProduct->setYear($ad->getProducts()[0]->getYear()) ?? null;
-                $newProduct->setSerieNumber($ad->getProducts()[0]->getSerieNumber()) ?? null;
+                $newProduct->setSerialNumber($ad->getProducts()[0]->getSerialNumber()) ?? null;
                 $newProduct->setUser($this->getUser());
                 $newProduct->setCreatedAt(new \DateTimeImmutable());
                 $newProduct->setCategory($categoryId);
                 
                 $ad->addProduct($newProduct);
             }
+        }
 
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
@@ -118,7 +116,7 @@ class AdController extends AbstractController
                 return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-
+            // dd($ad);
             // si il n'y a pas d'erreur, on enregistre l'objet ad en base de données
             $adRepository->add($ad, true);
             
