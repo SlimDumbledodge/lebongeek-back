@@ -93,7 +93,7 @@ class AppFixtures extends Fixture
 
             $ad = new Ad();
 
-            // $ad->setTitle($faker->title());
+            $ad->setTitle($faker->title());
             $ad->setDescription($faker->text());
             $ad->setPrice($faker->randomFloat(2, 0, 1000));
             $ad->setDescription($faker->text());

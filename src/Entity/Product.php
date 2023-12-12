@@ -87,13 +87,8 @@ class Product
     private $updated_at;
 
     /**
-<<<<<<< HEAD
-     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"remove", "persist"})
-     * @Groups({"products"})
-=======
      * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"remove"})
      * @Groups({"products", "categories", "searchData"})
->>>>>>> f33d8d692ad825b1e51f559ba36e32a8b1b433ed
      */
     private $ad;
 
