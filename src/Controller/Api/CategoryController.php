@@ -11,14 +11,27 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 class CategoryController extends AbstractController
 {
+
     /**
      * Get all data from Category entity
+     * 
+     * @Route("/api/list/categories", name="app_api_list_category", methods={"GET"})
+     * @param CategoryRepository $categoriesRepository
+     * @return void
+     */
+    public function categoryList(CategoryRepository $categoriesRepository)
+    {
+        $categories = $categoriesRepository->findAll();
+        return $this->json($categories, Response::HTTP_OK, [], ["groups" => "onlyCategories"]);
+    }
+
+    /**
+     * Get all data from Category entity with Ad and Product
      * 
      * @Route("/api/categories", name="app_api_category", methods={"GET"})
      * @param CategoryRepository $categoryRepository

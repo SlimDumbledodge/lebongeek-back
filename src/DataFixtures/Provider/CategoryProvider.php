@@ -24,7 +24,7 @@ class CategoryProvider
         'musique',
         'objets connectés',
         'jouets',
-        'évènements Geek'
+        'évènements geek'
     ];
 
     public function allCategories()

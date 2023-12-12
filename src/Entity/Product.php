@@ -16,7 +16,7 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "ads", "categories"})
+     * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
     private $id;
 
@@ -28,14 +28,14 @@ class Product
      *      max = 250,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads", "categories"})
+     * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Url
-     * @Groups({"users", "products", "ads", "categories"})
+     * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
     private $picture;
 
@@ -46,7 +46,7 @@ class Product
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads", "categories"})
+     * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
     private $year;
 
@@ -57,38 +57,43 @@ class Product
      *      max = 50,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "ads", "categories"})
+     * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
     private $serial_number;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product")
-     * @Groups({"products", "ads"})
+     * @Groups({"products", "ads", "searchData"})
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"products", "ads"})
+     * @Groups({"products", "ads", "searchData"})
      */
     private $category;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=false)
-     * @Groups({"users", "products", "ads", "categories"})
+     * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
     private $created_at;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"users", "products", "ads"})
+     * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
     private $updated_at;
 
     /**
+<<<<<<< HEAD
      * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"remove", "persist"})
      * @Groups({"products"})
+=======
+     * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"remove"})
+     * @Groups({"products", "categories", "searchData"})
+>>>>>>> f33d8d692ad825b1e51f559ba36e32a8b1b433ed
      */
     private $ad;
 
@@ -133,12 +138,12 @@ class Product
         return $this;
     }
 
-    public function getSerialNumber(): ?int
+    public function getSerialNumber(): ?string
     {
         return $this->serial_number;
     }
 
-    public function setSerialNumber(?int $serial_number): self
+    public function setSerialNumber(?string $serial_number): self
     {
         $this->serial_number = $serial_number;
 
