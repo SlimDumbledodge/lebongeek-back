@@ -18,20 +18,20 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "categories", "ads", "onlyCategories"})
+     * @Groups({"users", "products", "categories", "ads", "onlyCategories", "searchData"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Groups({"users", "products", "categories", "ads", "onlyCategories"})
+     * @Groups({"users", "products", "categories", "ads", "onlyCategories", "searchData"})
      */
     private $name;
     
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users", "products", "categories", "ads", "onlyCategories"})
+     * @Groups({"users", "products", "categories", "ads", "onlyCategories", "searchData"})
      */
     private $image;
     
@@ -48,7 +48,7 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"categories", "onlyCategories"})
+     * @Groups({"categories", "onlyCategories", "searchData"})
      */
     private $slug;
 

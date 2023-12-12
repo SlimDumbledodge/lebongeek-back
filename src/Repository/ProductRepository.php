@@ -39,28 +39,32 @@ class ProductRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Product[] Returns an array of Product objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Product[] Returns an array of Product objects
+     */
+    public function findBySearch($query): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.ad', 'a')
+            ->join('p.category', 'c')
+            ->join('p.user', 'u')
+            ->where('p.title LIKE :q')
+            ->orWhere('a.title LIKE :q')
+            ->orWhere('a.description LIKE :q')
+            ->orWhere('c.name LIKE :q')
+            ->orWhere('u.username LIKE :q')
+            ->setParameter('q', "%$query%")
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Product
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?Product
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

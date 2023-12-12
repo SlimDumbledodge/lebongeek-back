@@ -64,7 +64,7 @@ class ProductController extends AbstractController
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
 
-        try{
+        try {
             // je décode la saisie
             $jsonData = json_decode($content, true);
             //deserialise le json en objet
@@ -82,24 +82,23 @@ class ProductController extends AbstractController
             }
             $product->setCreatedAt(new \DateTimeImmutable());
             $product->setUser($this->getUser());
-
-    }   catch (NotEncodableValueException $err) {
-        // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
-        return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
-    }
-
-    //valide l'objet
-    $errors = $validator->validate($product);
-    //si il y a des erreurs
-    if(count($errors) > 0){
-        $dataErrors = [];
-        //on boucle sur les erreurs
-        foreach($errors as $error){
-            $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+        } catch (NotEncodableValueException $err) {
+            // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
+            return $this->json(["message" => "JSON invalide"], Response::HTTP_BAD_REQUEST);
         }
-        //on retourne les erreurs
-        return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
-    }
+
+        //valide l'objet
+        $errors = $validator->validate($product);
+        //si il y a des erreurs
+        if (count($errors) > 0) {
+            $dataErrors = [];
+            //on boucle sur les erreurs
+            foreach ($errors as $error) {
+                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+            }
+            //on retourne les erreurs
+            return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
         $productRepository->add($product, true);
 
         return $this->json(["message" => "Product created successfully", "productId" => $product->getId()], Response::HTTP_CREATED);
@@ -130,7 +129,7 @@ class ProductController extends AbstractController
             $updatedProduct->setUpdatedAt(new \DateTimeImmutable());
         } catch (NotEncodableValueException $err) {
             // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
-            return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
+            return $this->json(["message" => "JSON invalide"], Response::HTTP_BAD_REQUEST);
         }
 
         // valide l'objet User (permet de vérifier les assert de l'entité)
@@ -138,12 +137,12 @@ class ProductController extends AbstractController
         // si il y a des erreurs, on les retourne
         if (count($errors) > 0) {
             $dataErrors = [];
-        foreach($errors as $error){
-            // ici je met le nom du champs en index et le message d'erreur en valeur
-            $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
-        }
+            foreach ($errors as $error) {
+                // ici je met le nom du champs en index et le message d'erreur en valeur
+                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+            }
             return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }  
+        }
 
         // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
         $product->setTitle($updatedProduct->getTitle());
@@ -154,12 +153,12 @@ class ProductController extends AbstractController
         $product->setUpdatedAt(new \DateTimeImmutable());
 
         // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
-        $productRepository->add($product,true);
+        $productRepository->add($product, true);
 
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "Product modified successfully"], Response::HTTP_OK);
     }
-    
+
     /**
      * Delete data from Product entity
      * 
@@ -170,7 +169,7 @@ class ProductController extends AbstractController
      * @return JsonResponse
      */
     public function delete(ProductRepository $productRepository, Product $product): JsonResponse
-    {            
+    {
         // Vérifier si l'utilisateur existe
         if (!$product) {
             return $this->json(["error" => "Product not found"], Response::HTTP_NOT_FOUND);
@@ -180,23 +179,4 @@ class ProductController extends AbstractController
 
         return $this->json(["message" => "Product deleted successfully"], Response::HTTP_OK);
     }
-
-    /**
-     * @Route("/api/last_product", name="app_api_last_product", methods={"GET"})
-     *
-     * @param ProductRepository $productRepository
-     * @return void
-     */
-    public function lastUserProduct(ProductRepository $productRepository)
-    {
-        $lastProducts = $productRepository->findLastAddedValueById($this->getUser());
-
-        $productsUser = [];
-        foreach($lastProducts as $lastProduct){
-            $productsUser[] = $lastProduct['id'];
-        }
-
-        return $this->json(end($lastProduct), Response::HTTP_OK, [], ["groups" => "users"]);
-    }
 }
-

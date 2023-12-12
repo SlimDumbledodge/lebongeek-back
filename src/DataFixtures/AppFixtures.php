@@ -21,15 +21,15 @@ class AppFixtures extends Fixture
     {
         $this->passwordHasher = $passwordHasher;
     }
-    
+
     public function load(ObjectManager $manager): void
     {
-        
-        
+
+
         $faker = Factory::create('fr_FR');
 
         $faker->addProvider(new CategoryProvider());
-            
+
         //!  USER
 
         $userList = [];
@@ -47,11 +47,10 @@ class AppFixtures extends Fixture
             $user->setCreatedAt(new \DateTimeImmutable());
             $user->setPhoneNumber($faker->isbn10());
             $user->setRoles(['ROLE_USER']);
-            
+
             $userList[] = $user;
 
             $manager->persist($user);
-
         }
 
         //! ADDRESS
@@ -69,13 +68,12 @@ class AppFixtures extends Fixture
             $address->setUser($faker->randomElement($userList));
 
             $manager->persist($address);
-            
         }
 
         //! CATEGORY
 
         $categoryList = [];
-        $allCategories = $faker->allCategories(); 
+        $allCategories = $faker->allCategories();
 
         foreach ($allCategories as $categoryName) {
             $category = new Category();
@@ -83,9 +81,8 @@ class AppFixtures extends Fixture
 
             $category->setImage($faker->imageUrl());
 
-            $categoryList[] = $category; 
+            $categoryList[] = $category;
             $manager->persist($category);
-
         }
 
         //! AD
@@ -95,18 +92,19 @@ class AppFixtures extends Fixture
         for ($k = 0; $k < 40; $k++) {
 
             $ad = new Ad();
-   
+
+            $ad->setTitle($faker->title());
             $ad->setDescription($faker->text());
             $ad->setPrice($faker->randomFloat(2, 0, 1000));
             $ad->setDescription($faker->text());
-            $ad->setState(rand(1,6));
+            $ad->setState(rand(1, 6));
             $ad->setLocation($faker->city());
             $ad->setCreatedAt(new \DateTimeImmutable());
             $ad->setCategory($faker->randomElement($categoryList));
             $ad->setUser($userList[$k]);
 
             $adList[] = $ad;
-            
+
             $manager->persist($ad);
         }
 
@@ -126,9 +124,9 @@ class AppFixtures extends Fixture
             $product->setCategory($faker->randomElement($categoryList));
             $product->setUser($userList[$l]);
             $product->setAd($adList[$l]);
-            
+
             $productList[] = $product;
-            
+
             $manager->persist($product);
         }
 

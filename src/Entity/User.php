@@ -22,14 +22,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "address", "ads"})
+     * @Groups({"users", "products", "address", "ads", "searchData"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Groups({"users", "products", "address", "ads"})
+     * @Groups({"users", "products", "address", "ads", "searchData"})
      */
     private $username;
 
@@ -50,7 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\Url
-     * @Groups({"users", "products", "address", "ads"})
+     * @Groups({"users", "products", "address", "ads", "searchData"})
      */
     private $avatar;
 
@@ -76,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      max = 5000,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
-     * @Groups({"users", "products", "address", "ads"})
+     * @Groups({"users", "products", "address", "ads", "searchData"})
      */
     private $description;
 
