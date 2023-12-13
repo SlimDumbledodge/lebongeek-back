@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\MyMailer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -61,7 +62,7 @@ class UserController extends AbstractController
      * @param UserPasswordHasherInterface $passwordHasher
      * @return JsonResponse
      */
-    public function create(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function create(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher, MyMailer $mailer): JsonResponse
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
@@ -73,6 +74,7 @@ class UserController extends AbstractController
             $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
             $user->setAvatar($user->getAvatar() ?? 'http://placehold.it/300x300');
             $user->setBanner($user->getBanner() ?? 'http://placehold.it/500x500');
+            $user->setDescription($user->getDescription() ?? 'Je n\'ai pas de description');
             $user->setCreatedAt(new \DateTimeImmutable());
             $user->setRoles(['ROLE_USER']);
         } catch (\Exception $e) {
@@ -93,6 +95,11 @@ class UserController extends AbstractController
         // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
         $userRepository->add($user, true);
 
+        $mailer->send(
+            "L'utilisateur " . $user->getUsername() . " a été crée",
+            "user"
+        );
+        dd($mailer);
 
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User created successfully"], Response::HTTP_CREATED);
@@ -109,7 +116,7 @@ class UserController extends AbstractController
      * @param ValidatorInterface $validator
      * @return JsonResponse
      */
-    public function update(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, User $loggedUser): JsonResponse
+    public function update(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, User $loggedUser, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         // Vérifier si l'utilisateur existe
         if (!$loggedUser) {
@@ -142,10 +149,12 @@ class UserController extends AbstractController
         $loggedUser->setUsername($updatedUser->getUsername());
         $loggedUser->setFirstname($updatedUser->getFirstname());
         $loggedUser->setLastname($updatedUser->getLastname());
-        $loggedUser->setAvatar($updatedUser->getAvatar());
-        $loggedUser->setBanner($updatedUser->getBanner());
+        $loggedUser->setEmail($updatedUser->getEmail());
+        $loggedUser->setPassword($passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
+        $loggedUser->setDescription($updatedUser->getDescription() === "" ? 'Je n\'ai pas de description' : $updatedUser->getDescription());
+        $loggedUser->setAvatar($updatedUser->getAvatar() === "" ? 'http://placehold.it/300x300' : $updatedUser->getAvatar());
+        $loggedUser->setBanner($updatedUser->getBanner() === "" ? 'http://placehold.it/500x500' : $updatedUser->getBanner());
         $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
-        $loggedUser->setDescription($updatedUser->getDescription() ?? 'Je n\'ai pas de description');
 
         // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
         $userRepository->add($loggedUser, true);
