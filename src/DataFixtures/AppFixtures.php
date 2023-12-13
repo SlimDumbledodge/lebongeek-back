@@ -43,6 +43,7 @@ class AppFixtures extends Fixture
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());
             $user->setAvatar($faker->imageUrl(640, 480, 'cats'));
+            $user->setBanner($faker->imageUrl(800, 800, 'cats'));
             $user->setEmail($faker->email());
             $user->setCreatedAt(new \DateTimeImmutable());
             $user->setPhoneNumber($faker->isbn10());

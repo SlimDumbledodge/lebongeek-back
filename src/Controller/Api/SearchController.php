@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Repository\ProductRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +16,7 @@ class SearchController extends AbstractController
     /**
      * @Route("/api/search", name="app_api_search", methods={"POST"})
      */
-    public function searchData(Request $request, ProductRepository $productRepository, SerializerInterface $serializer): JsonResponse
+    public function searchData(Request $request, ProductRepository $productRepository, SerializerInterface $serializer, PaginatorInterface $paginator): JsonResponse
     {
         $data = $productRepository->findBySearch($request->query->get('query'));
 
@@ -24,7 +25,13 @@ class SearchController extends AbstractController
             return $this->json(["message" => "Aucun élément trouvé"], Response::HTTP_NO_CONTENT);
         }
 
-        $jsonData = $serializer->serialize($data, 'json', ["groups" => "searchData"]);
+        $paginateData = $paginator->paginate(
+            $data,
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        $jsonData = $serializer->serialize($paginateData, 'json', ["groups" => "searchData"]);
 
         $data = count($data);
 

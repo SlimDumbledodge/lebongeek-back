@@ -17,8 +17,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 
-{   
-     /**
+{
+    /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -53,6 +53,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Groups({"users", "products", "address", "ads", "searchData"})
      */
     private $avatar;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Url
+     * @Groups({"users", "products", "address", "ads", "searchData"})
+     */
+    private $banner;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false, unique=true)
@@ -171,6 +178,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatar(string $avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getBanner(): ?string
+    {
+        return $this->banner;
+    }
+
+    public function setBanner(?string $banner): self
+    {
+        $this->banner = $banner;
 
         return $this;
     }
