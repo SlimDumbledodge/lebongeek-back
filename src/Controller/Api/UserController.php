@@ -4,7 +4,6 @@ namespace App\Controller\Api;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Service\MyMailer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -62,7 +61,7 @@ class UserController extends AbstractController
      * @param UserPasswordHasherInterface $passwordHasher
      * @return JsonResponse
      */
-    public function create(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher, MyMailer $mailer): JsonResponse
+    public function create(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
@@ -94,12 +93,6 @@ class UserController extends AbstractController
         }
         // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
         $userRepository->add($user, true);
-
-        $mailer->send(
-            "L'utilisateur " . $user->getUsername() . " a été crée",
-            "user"
-        );
-        dd($mailer);
 
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User created successfully"], Response::HTTP_CREATED);
