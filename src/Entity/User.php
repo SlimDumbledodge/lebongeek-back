@@ -79,9 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Assert\Length(
-     *      min = 5,
      *      max = 5000,
-     *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "products", "address", "ads", "searchData"})
      */
@@ -114,6 +112,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @Assert\NotBlank
      */
     private $password;
 
