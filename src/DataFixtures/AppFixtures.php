@@ -72,16 +72,17 @@ class AppFixtures extends Fixture
 
         //! CATEGORY
 
+        $categoryProvider = new CategoryProvider();
+        $allCategories = $categoryProvider->allCategories();
         $categoryList = [];
-        $allCategories = $faker->allCategories();
 
-        foreach ($allCategories as $categoryName) {
+        foreach ($allCategories as $categoryData) {
             $category = new Category();
-            $category->setName($categoryName);
-
-            $category->setImage($faker->imageUrl());
+            $category->setName($categoryData['name']);
+            $category->setImage($categoryData['image']);
 
             $categoryList[] = $category;
+
             $manager->persist($category);
         }
 
