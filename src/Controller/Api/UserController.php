@@ -61,7 +61,7 @@ class UserController extends AbstractController
      * @param UserPasswordHasherInterface $passwordHasher
      * @return JsonResponse
      */
-    public function create(Request $request,UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function create(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         //recupere le contenu de la requette (json)
         $content = $request->getContent();
@@ -72,28 +72,28 @@ class UserController extends AbstractController
 
             $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
             $user->setAvatar($user->getAvatar() ?? 'http://placehold.it/300x300');
+            $user->setBanner($user->getBanner() ?? 'http://placehold.it/500x500');
+            $user->setDescription($user->getDescription() ?? 'Je n\'ai pas de description');
             $user->setCreatedAt(new \DateTimeImmutable());
             $user->setRoles(['ROLE_USER']);
-
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
             return $this->json(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-            // valide l'objet User (permet de vérifier les assert de l'entité)
-            $errors = $validator->validate($user);
-            // si il y a des erreurs, on les retourne
-            if (count($errors) > 0) {
-                $dataErrors = [];
-            foreach($errors as $error){
+        // valide l'objet User (permet de vérifier les assert de l'entité)
+        $errors = $validator->validate($user);
+        // si il y a des erreurs, on les retourne
+        if (count($errors) > 0) {
+            $dataErrors = [];
+            foreach ($errors as $error) {
                 // ici je met le nom du champs en index et le message d'erreur en valeur
                 $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
             }
-                return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-            // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
-            $userRepository->add($user,true);
-            
-        
+            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
+        $userRepository->add($user, true);
+
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User created successfully"], Response::HTTP_CREATED);
     }
@@ -109,7 +109,7 @@ class UserController extends AbstractController
      * @param ValidatorInterface $validator
      * @return JsonResponse
      */
-    public function update(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, User $loggedUser): JsonResponse
+    public function update(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, User $loggedUser, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         // Vérifier si l'utilisateur existe
         if (!$loggedUser) {
@@ -124,31 +124,34 @@ class UserController extends AbstractController
             $updatedUser = $serializerInterface->deserialize($content, User::class, 'json');
         } catch (NotEncodableValueException $err) {
             // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
-            return $this->json(["message" => "JSON invalide"],Response::HTTP_BAD_REQUEST);
+            return $this->json(["message" => "JSON invalide"], Response::HTTP_BAD_REQUEST);
         }
-            // valide l'objet User (permet de vérifier les assert de l'entité)
-            $errors = $validator->validate($updatedUser);
-            // si il y a des erreurs, on les retourne
-            if (count($errors) > 0) {
-                $dataErrors = [];
-            foreach($errors as $error){
+        // valide l'objet User (permet de vérifier les assert de l'entité)
+        $errors = $validator->validate($updatedUser);
+        // si il y a des erreurs, on les retourne
+        if (count($errors) > 0) {
+            $dataErrors = [];
+            foreach ($errors as $error) {
                 // ici je met le nom du champs en index et le message d'erreur en valeur
                 $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
             }
-                return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-            }  
+            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-            // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
-            $loggedUser->setUsername($updatedUser->getUsername());
-            $loggedUser->setFirstname($updatedUser->getFirstname());
-            $loggedUser->setLastname($updatedUser->getLastname());
-            $loggedUser->setAvatar($updatedUser->getAvatar());
-            $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
-            $loggedUser->setDescription($updatedUser->getDescription() ?? 'Je n\'ai pas de description');
-            
-            // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
-            $userRepository->add($loggedUser,true);
-            
+        // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
+        $loggedUser->setUsername($updatedUser->getUsername());
+        $loggedUser->setFirstname($updatedUser->getFirstname());
+        $loggedUser->setLastname($updatedUser->getLastname());
+        $loggedUser->setEmail($updatedUser->getEmail());
+        $loggedUser->setPassword($passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
+        $loggedUser->setDescription($updatedUser->getDescription() === "" ? 'Je n\'ai pas de description' : $updatedUser->getDescription());
+        $loggedUser->setAvatar($updatedUser->getAvatar() === "" ? 'http://placehold.it/300x300' : $updatedUser->getAvatar());
+        $loggedUser->setBanner($updatedUser->getBanner() === "" ? 'http://placehold.it/500x500' : $updatedUser->getBanner());
+        $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
+
+        // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
+        $userRepository->add($loggedUser, true);
+
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User modified successfully"], Response::HTTP_OK);
     }
@@ -184,9 +187,7 @@ class UserController extends AbstractController
     public function getCurrentUser()
     {
         $currentUser = $this->getUser();
-        
+
         return $this->json($currentUser, Response::HTTP_OK, [], ["groups" => "users"]);
     }
-
 }
-

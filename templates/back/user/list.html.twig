@@ -9,12 +9,32 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/var/www/html/apotheose/projet-08-le-bon-geek-back/src/Controller/Back/UserController.php'|file_link(0) }}">src/Controller/Back/UserController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/var/www/html/apotheose/projet-08-le-bon-geek-back/templates/back/user/index.html.twig'|file_link(0) }}">templates/back/user/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <a class="btn btn-success btn-sm" href="{{ path('app_back_user_new') }}">Create new</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+                <td>
+                    <a class="btn btn-success btn-sm" href="{{ path('app_back_user_show', {'id': user.id}) }}">show</a>
+                    <a class="btn btn-warning btn-sm" href="{{ path('app_back_user_edit', {'id': user.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

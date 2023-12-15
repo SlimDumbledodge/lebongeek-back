@@ -40,5 +40,4 @@ class CategoryProvider
 
         return $categories;
     }
-
 }
