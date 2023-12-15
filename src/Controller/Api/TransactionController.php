@@ -2,15 +2,16 @@
 
 namespace App\Controller\Api;
 
-use App\Repository\AdRepository;
-use App\Repository\ProductRepository;
 use App\Service\MyMailer;
+use App\Repository\AdRepository;
 use App\Service\TransactionService;
+use App\Repository\ProductRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 
 class TransactionController extends AbstractController
 {
@@ -39,26 +40,11 @@ class TransactionController extends AbstractController
         $mailer->sendTransaction(
             $this->getUser()->getEmail(),
             $product[0]->getUser()->getEmail(),
-            'Confirmation de transaction - Produit : ' . dd($product[0]->getTitle()),
-            $this->generateUrl('app_api_transaction_confirmation', ['token' => str_replace('/', '-', $product[0]->getUser()->getPassword()), 'buyer' => $this->getUser()->getId()])
+            'Confirmation de transaction - Produit : ' . $product[0]->getId() . '-' . $product[0]->getTitle(),
+            $this->generateUrl('app_transaction_confirmation', ['token' => preg_replace('/[^A-Za-z0-9]/', '-', $product[0]->getUser()->getPassword()), 'buyer' => $this->getUser()->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
         );
 
         return $this->json(['message' => 'Mail envoyé !'], Response::HTTP_OK);
-    }
-
-    /**
-     * @Route("/api/transaction/confirmation/{token}/{buyer}", name="app_api_transaction_confirmation", methods={"GET"})
-     *
-     * @param Request $request
-     * @param ProductRepository $productRepository
-     * @param AdRepository $adRepository
-     * @return JsonResponse
-     */
-    public function transactionConfirmation(Request $request, ProductRepository $productRepository, AdRepository $adRepository): JsonResponse
-    {
-        // dd($request);
-        // if ($request->request->token === str_replace('/', '-', $this->getUser()->getPassword())) {
-        // }
     }
 
     /**
