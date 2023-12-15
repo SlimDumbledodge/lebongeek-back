@@ -20,7 +20,7 @@ class ContactController extends AbstractController
 
         $jsonData = json_decode($content, true);
 
-        $mailer->send(
+        $mailer->sendContact(
             $jsonData['from'],
             $jsonData['subject'],
             $jsonData['content']
