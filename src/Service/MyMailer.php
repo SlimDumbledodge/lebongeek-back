@@ -35,10 +35,10 @@ class MyMailer
         $this->mailer->send($email);
     }
 
-    public function sendTransaction(string $from, string $to, string $subject, string $content)
+    public function sendTransaction(string $to, string $subject, string $content)
     {
         $email = (new Email())
-            ->from($from)
+            ->from($this->adminMail)
             ->to($to)
             ->subject($subject)
             ->text($content);

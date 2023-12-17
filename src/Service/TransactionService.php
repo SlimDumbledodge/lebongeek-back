@@ -20,17 +20,23 @@ class TransactionService
         $this->adRepository = $adRepository;
     }
 
-
+    /**
+     * Set the user of the product to the buyer and remove the ad
+     *
+     * @param [type] $content
+     * @param [type] $user
+     * @return JsonResponse
+     */
     public function transaction($content, $user): JsonResponse
     {
         // je récupère le produit grâce à l'id renseigné
-        $product = $this->productRepository->findProductByAdId($content['ad']);
+        $product = $this->productRepository->findProductByAdId($content);
         // je modifie le user du produit
         $product[0]->setUser($user);
         // je désassocie l'annonce du produit
         $product[0]->setAd(null);
         // je supprime l'annonce
-        $this->adRepository->remove($this->adRepository->find($content['ad']), true);
+        $this->adRepository->remove($this->adRepository->find($content), true);
         // j'ajoute le produit dans la base de données
         $this->productRepository->add($product[0], true);
         // je retourne un message de confirmation

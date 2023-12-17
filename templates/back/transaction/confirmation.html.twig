@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vente Confirmée
+
+{% endblock %}
+
+{% block stylesheets %}
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			color: #333;
+			text-align: center;
+			margin: 0;
+			padding: 0;
+		}
+
+		.confirmation-container {
+			max-width: 600px;
+			margin: 50px auto;
+			padding: 20px;
+			background-color: #fff;
+			border-radius: 5px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.confirmation-message {
+			font-size: 24px;
+			font-weight: bold;
+			color: #4CAF50;
+			margin-bottom: 20px;
+		}
+
+		.confirmation-text {
+			font-size: 16px;
+			margin-bottom: 30px;
+		}
+
+		.back-to-home {
+			display: inline-block;
+			padding: 10px 20px;
+			background-color: #4CAF50;
+			color: #fff;
+			text-decoration: none;
+			border-radius: 3px;
+			transition: background-color 0.3s;
+		}
+
+		.back-to-home:hover {
+			background-color: #45a049;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+
+	<div class="container mt-4">
+
+		<div class="confirmation-container">
+			<div class="confirmation-message">Vente Confirmée!</div>
+			<div class="confirmation-text">
+				Merci pour votre achat. Votre vente a été confirmée avec succès.
+			</div>
+		</div>
+
+	</div>
+
+{% endblock %}
