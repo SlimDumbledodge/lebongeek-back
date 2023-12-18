@@ -69,10 +69,8 @@ class UserController extends AbstractController
         ]);
     }
 
-
-
     /**
-     * @Route("/{id}/update", name="_update", methods={"PUT"})
+     * @Route("/{id}/update", name="_update", methods={"POST"})
      */
     public function update(Request $request, User $user, UserRepository $userRepository): Response
     {

@@ -30,6 +30,9 @@ class CategoryProvider
         ['name' => 'evènements geek', 'image' => 'https://i.postimg.cc/2STN6QNy/Evenements-Geek.png'],
         ['name' => 'créations originales', 'image' => 'https://i.postimg.cc/ncbJwV1F/Cr-ations-originales.png'],
     ];
+    
+        
+    
 
     public function allCategories()
     {
