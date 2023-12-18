@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Ad;
 use App\Service\AdService;
 use App\Repository\AdRepository;
+use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -88,13 +89,18 @@ class AdController extends AbstractController
      * @param AdRepository $adRepository
      * @return JsonResponse
      */
-    public function delete(AdRepository $adRepository, Ad $ad): JsonResponse
+    public function delete(AdRepository $adRepository, ProductRepository $productRepository, Ad $ad): JsonResponse
     {
         // si l'utilisateur n'existe pas, on retourne une reponse 404
         if (!$ad) {
             return $this->json(["error" => "ad not found"], Response::HTTP_NOT_FOUND);
         }
 
+        // je récupère le produit grâce à l'id renseigné
+        $product = $productRepository->findProductByAdId($ad);
+        // je désassocie l'annonce du produit
+        $product[0]->setAd(null);
+        // je supprime l'annonce
         $adRepository->remove($ad, true);
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "ad deleted successfully"], Response::HTTP_OK);

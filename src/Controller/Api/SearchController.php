@@ -53,6 +53,6 @@ class SearchController extends AbstractController
         // je serialize la pagination avec les données
         $jsonData = $serializer->serialize($paginateData, 'json', ["groups" => "searchData"]);
         // je retourne les données, le nombre de données reçu et je change le code http en fonction du type de donnée reçu
-        return $this->json(["message" => "$countedData élément(s) trouvé(s)", "data" => json_decode($jsonData)], $reponse ?? Response::HTTP_OK);
+        return $this->json(["message" => "$countedData", "data" => json_decode($jsonData)], $reponse ?? Response::HTTP_OK);
     }
 }
