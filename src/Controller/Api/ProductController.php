@@ -3,18 +3,15 @@
 namespace App\Controller\Api;
 
 use App\Entity\Product;
-use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
+use App\Service\ProductService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 class ProductController extends AbstractController
 {
@@ -53,55 +50,15 @@ class ProductController extends AbstractController
      * 
      * @IsGranted("ROLE_USER")
      * @Route("/api/products", name="app_api_product_new", methods={"POST"})
+     *
      * @param Request $request
-     * @param ProductRepository $productRepository
-     * @param SerializerInterface $serializer
-     * @param ValidatorInterface $validator
-     * @return JsonResponse
+     * @param ProductService $productService
+     * @return void
      */
-    public function create(Request $request, ProductRepository $productRepository, SerializerInterface $serializer, ValidatorInterface $validator, CategoryRepository $categoriesRepository): JsonResponse
+    public function create(Request $request, ProductService $productService)
     {
-        //recupere le contenu de la requette (json)
-        $content = $request->getContent();
-
-        try {
-            // je décode la saisie
-            $jsonData = json_decode($content, true);
-            //deserialise le json en objet
-            $product = $serializer->deserialize($content, Product::class, 'json');
-
-            // je vérifie que la categorie est bien renseignée
-            if (!empty($jsonData['category']['id'])) {
-                // je récupère une catégorie grâce à l'id renseigné
-                $categoryId = $categoriesRepository->find($jsonData['category']['id']);
-                // j'assigne la catégorie au produit
-                $product->setCategory($categoryId);
-            } else {
-                // Si l'id de la catégorie n'est pas renseigné, alors je renvoie une erreur 400
-                return $this->json(["message" => "Veuillez associer votre produit à une catégorie"], Response::HTTP_BAD_REQUEST);
-            }
-            $product->setCreatedAt(new \DateTimeImmutable());
-            $product->setUser($this->getUser());
-        } catch (NotEncodableValueException $err) {
-            // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
-            return $this->json(["message" => "JSON invalide"], Response::HTTP_BAD_REQUEST);
-        }
-
-        //valide l'objet
-        $errors = $validator->validate($product);
-        //si il y a des erreurs
-        if (count($errors) > 0) {
-            $dataErrors = [];
-            //on boucle sur les erreurs
-            foreach ($errors as $error) {
-                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
-            }
-            //on retourne les erreurs
-            return $this->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        $productRepository->add($product, true);
-
-        return $this->json(["message" => "Product created successfully", "productId" => $product->getId()], Response::HTTP_CREATED);
+        // j'utilise la method add de mon ProductService pour lui fournir le contenu reçu par la requête et l'utilisateur connecté
+        return $productService->add($request->getContent(), $this->getUser());
     }
 
     /**
@@ -109,54 +66,16 @@ class ProductController extends AbstractController
      * 
      * @Security("is_granted('ROLE_USER') and user === product.getUser()")
      * @Route("/api/{id}/products", name="app_api_product_update", methods={"PUT"})
+     *
      * @param Request $request
-     * @param ProductRepository $productRepository
-     * @param SerializerInterface $serializerInterface
-     * @param ValidatorInterface $validator
+     * @param Product $product
+     * @param ProductService $productService
      * @return void
      */
-    public function update(Request $request, ProductRepository $productRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, Product $product)
+    public function update(Request $request, Product $product, ProductService $productService)
     {
-        // Vérifier si l'utilisateur existe
-        if (!$product) {
-            return $this->json(["error" => "Product not found"], Response::HTTP_NOT_FOUND);
-        }
-        //recupere le contenu de la requette (json)
-        $content = $request->getContent();
-        try {
-            // converti le contenu de la requette en objet User
-            $updatedProduct = $serializerInterface->deserialize($content, Product::class, 'json');
-            $updatedProduct->setUpdatedAt(new \DateTimeImmutable());
-        } catch (NotEncodableValueException $err) {
-            // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
-            return $this->json(["message" => "JSON invalide"], Response::HTTP_BAD_REQUEST);
-        }
-
-        // valide l'objet User (permet de vérifier les assert de l'entité)
-        $errors = $validator->validate($updatedProduct);
-        // si il y a des erreurs, on les retourne
-        if (count($errors) > 0) {
-            $dataErrors = [];
-            foreach ($errors as $error) {
-                // ici je met le nom du champs en index et le message d'erreur en valeur
-                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
-            }
-            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
-        $product->setTitle($updatedProduct->getTitle());
-        $product->setPicture($updatedProduct->getPicture());
-        $product->setYear($updatedProduct->getYear());
-        $product->setSerialNumber($updatedProduct->getSerialNumber());
-        $product->setCategory($updatedProduct->getCategory());
-        $product->setUpdatedAt(new \DateTimeImmutable());
-
-        // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
-        $productRepository->add($product, true);
-
-        // si tout s'est bien passé, on retourne une reponse 200
-        return $this->json(["message" => "Product modified successfully"], Response::HTTP_OK);
+        // j'utilise la method edit de mon ProductService pour lui fournir le contenu reçu par la requête et le product à modifier
+        return $productService->edit($request->getContent(), $product);
     }
 
     /**

@@ -24,11 +24,22 @@ class MyMailer
      * @param string $subject Subject of the mail
      * @param string $text content
      */
-    public function send(string $from, string $subject, string $content)
+    public function sendContact(string $from, string $subject, string $content)
     {
         $email = (new Email())
             ->from($from)
             ->to($this->adminMail)
+            ->subject($subject)
+            ->text($content);
+
+        $this->mailer->send($email);
+    }
+
+    public function sendTransaction(string $to, string $subject, string $content)
+    {
+        $email = (new Email())
+            ->from($this->adminMail)
+            ->to($to)
             ->subject($subject)
             ->text($content);
 
