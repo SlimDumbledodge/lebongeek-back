@@ -22,7 +22,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "address", "ads", "searchData"})
+     * @Groups({"users", "products", "address", "ads", "searchData", "transaction"})
      */
     private $id;
 

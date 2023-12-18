@@ -86,7 +86,7 @@ class Ad
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="ad", cascade={"remove", "persist"})
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="ad", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"ads"})
      */

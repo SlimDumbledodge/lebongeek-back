@@ -3,13 +3,14 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Form\UserType;
+use App\Repository\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
-use Symfony\Component\HttpFoundation\Request;
+
 /**
  * @Route("/back", name="app_back")
  */
@@ -56,7 +57,7 @@ class UserController extends AbstractController
             );
             // je set le password
             $user->setPassword($hashedPassword);
-            
+
             $userRepository->add($user, true);
 
             return $this->redirectToRoute('app_back_user', [], Response::HTTP_SEE_OTHER);
@@ -68,7 +69,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    
+
 
     /**
      * @Route("/{id}/update", name="_update", methods={"PUT"})
@@ -95,7 +96,7 @@ class UserController extends AbstractController
      */
     public function delete(Request $request, User $user, UserRepository $userRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $userRepository->remove($user, true);
         }
 

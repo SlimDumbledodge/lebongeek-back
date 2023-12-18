@@ -16,7 +16,7 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "ads", "categories", "searchData"})
+     * @Groups({"users", "products", "ads", "categories", "searchData", "transaction"})
      */
     private $id;
 
@@ -63,7 +63,7 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="product")
-     * @Groups({"products", "ads", "searchData"})
+     * @Groups({"products", "ads", "searchData", "transaction"})
      */
     private $user;
 
