@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api;
 
-use stdClass;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -34,10 +33,10 @@ class SearchController extends AbstractController
             $paginateData = $paginator->paginate(
                 $datas,
                 $request->query->getInt('page', 1),
-                4
+                9
             );
             // si j'ai reçu une donnée, alors la variable $response sera set
-            $reponse = Response::HTTP_FOUND;
+            $reponse = Response::HTTP_ACCEPTED;
         };
         // si je n'ai toujours pas de donnée
         if ($countedData < 1) {
@@ -48,7 +47,7 @@ class SearchController extends AbstractController
         $paginateData = $paginator->paginate(
             $datas,
             $request->query->getInt('page', 1),
-            4
+            9
         );
         // je serialize la pagination avec les données
         $jsonData = $serializer->serialize($paginateData, 'json', ["groups" => "searchData"]);

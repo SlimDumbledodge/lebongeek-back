@@ -40,7 +40,8 @@
         "symfony/twig-bundle": "5.4.*",
         "symfony/validator": "^5.4",
         "symfony/web-server-bundle": "4.4",
-        "symfony/yaml": "5.4.*"
+        "symfony/yaml": "5.4.*",
+        "vich/uploader-bundle": "^1.23"
     },
     "config": {
         "allow-plugins": {

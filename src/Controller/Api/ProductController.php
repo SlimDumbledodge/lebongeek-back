@@ -98,4 +98,14 @@ class ProductController extends AbstractController
 
         return $this->json(["message" => "Product deleted successfully"], Response::HTTP_OK);
     }
+
+    /**
+     * @Route("/api/test", name="app_api_test", methods={"POST"})
+     */
+    public function test(Request $request)
+    {
+        $content = $request->getContent();
+        // dd($content);
+        return $this->json(["message" => $content]);
+    }
 }

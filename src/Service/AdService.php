@@ -84,6 +84,11 @@ class AdService
         if (!empty($jsonData['productId'])) {
             // je récupère le produit à mettre en vente
             $product = $this->productRepository->find($jsonData['productId']);
+            // je vérifie que le produit n'est pas déjà associé à une annonce
+            if (!empty($product->getAd())) {
+                // si le produit est déjà associé à une annonce, alors je renvoie une erreur 400
+                return new JsonResponse(["message" => "Ce produit est déjà associé à une annonce"], Response::HTTP_BAD_REQUEST);
+            }
             //  je lui attribut l'id de l'annonce
             $product->setAd($ad);
             // puis j'envoie en bdd

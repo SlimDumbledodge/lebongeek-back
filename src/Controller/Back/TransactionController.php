@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Repository\AdRepository;
+use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use App\Service\TransactionService;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,7 @@ class TransactionController extends AbstractController
      * @param AdRepository $adRepository
      * @return Response
      */
-    public function transactionConfirmation(Request $request, UserRepository $userRepository, AdRepository $adRepository, TransactionService $transactionService): Response
+    public function transactionConfirmation(Request $request, UserRepository $userRepository, AdRepository $adRepository, ProductRepository $productRepository, TransactionService $transactionService): Response
     {
         // je récupère le token de l'utilisateur
         $userToken = preg_replace('/[^A-Za-z0-9]/', '-', $this->getUser()->getPassword());
@@ -31,6 +32,8 @@ class TransactionController extends AbstractController
         $buyer = $userRepository->find($request->get('buyer'));
         // je récupère l'annonce
         $ad = $adRepository->find($request->get('ad'));
+        // je récupère le produit
+        $product = $productRepository->findProductByAdId($request->get('ad'));
         // si le vendeur est bien l'utilisateur
         if ($request->get('token') === $userToken) {
             // si l'annonce existe et que l'annonce appartient bien à l'utilisateur
@@ -39,6 +42,8 @@ class TransactionController extends AbstractController
                 if (!empty($buyer)) {
                     // je lance la transaction
                     $transactionService->transaction($request->get('ad'), $buyer);
+                    // j'envoie un mail de confirmation à l'acheteur
+                    $transactionService->purchaseConfirmed($buyer, $product);
                     // je retourne un message de confirmation
                     return $this->render('back/transaction/confirmation.html.twig');
                 }
