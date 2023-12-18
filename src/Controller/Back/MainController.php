@@ -19,7 +19,7 @@ class MainController extends AbstractController
         $data = $productRepository->findBySearch($request->query->get('query'));
 
         if (empty($data)) {
-            //TODO faire une message en front
+
             return $this->json(["message" => "Aucun élément trouvé"], Response::HTTP_NO_CONTENT);
         }
 
