@@ -3,8 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\Product;
-use App\Repository\ProductRepository;
+use App\Form\ProductType;
 use App\Service\ProductService;
+use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -102,10 +103,37 @@ class ProductController extends AbstractController
     /**
      * @Route("/api/test", name="app_api_test", methods={"POST"})
      */
-    public function test(Request $request)
+    public function test(Request $request, ProductRepository $productRepository)
     {
-        $content = $request->getContent();
-        // dd($content);
-        return $this->json(["message" => $content]);
+        /* $content = $request->getContent(); */
+        $product = new Product();
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // ... (votre code existant)
+            
+            // Récupérer l'objet UploadedFile
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form['imageFile']->getData();
+            
+            // Obtenez le répertoire cible depuis la configuration VichUploader
+            $targetDirectory = $this->getParameter('vich_uploader.mappings.product.imageFile.upload_destination');
+            
+            // Générez un nom de fichier unique
+            $fileName = md5(uniqid()) . '.' . $imageFile->guessExtension();
+            
+            // Déplacez le fichier vers le répertoire cible
+            $imageFile->move($targetDirectory, $fileName);
+            
+            // Mettez à jour l'entité Product avec le nouveau nom de fichier
+            $product->setImageName($fileName);
+            
+            // Enregistrez l'entité dans la base de données
+            $productRepository->add($product, true);
+        }
+        dd($product);
+        return $this->json(["message" => $product]);
     }
+       
 }

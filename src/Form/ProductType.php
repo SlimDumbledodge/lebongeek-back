@@ -44,7 +44,7 @@ class ProductType extends AbstractType
                 'label' => 'Utilisateur',
                 'choice_label' => 'username',
             ])
-            ->add('submite', SubmitType::class, [
+            ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter',
                 'attr' => [
                     'class' => 'btn btn-primary'
