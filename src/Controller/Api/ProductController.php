@@ -3,8 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\Product;
-use App\Repository\ProductRepository;
+use App\Form\ProductType;
 use App\Service\ProductService;
+use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,6 +13,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
@@ -102,10 +105,23 @@ class ProductController extends AbstractController
     /**
      * @Route("/api/test", name="app_api_test", methods={"POST"})
      */
-    public function test(Request $request)
+    public function test(Request $request, ProductRepository $productRepository, ProductService $productService, SerializerInterface $serializer)
     {
-        $content = $request->getContent();
-        // dd($content);
-        return $this->json(["message" => $content]);
+
+
+        // Récupérez le fichier téléchargé
+        $content = $request->files->get('picture');
+        $data = $serializer->serialize($content, 'json');
+        $folderPath = 'images/product/';
+        $image_parts = explode(";base64,", $data);
+        $image_type_aux = explode("image\/", $image_parts[0]);
+        $image_type = $image_type_aux[1];
+        $image_base64 = base64_decode($image_parts[1]);
+        $file = $folderPath . uniqid() . '.' . $image_type;
+        $pictureName = explode("product/", $file);
+        file_put_contents($file, $image_base64);
+        // dd(file_put_contents($file, $image_base64));
+
+        return $productService->add($request->getContent(), $this->getUser(), $pictureName[1]);
     }
 }

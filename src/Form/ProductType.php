@@ -3,16 +3,13 @@
 namespace App\Form;
 
 use App\Entity\Product;
-use Faker\Provider\ar_EG\Text;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class ProductType extends AbstractType
 {
@@ -30,7 +27,7 @@ class ProductType extends AbstractType
                 'image_uri' => true,
                 'asset_helper' => true,
             ])
-            ->add('imageName', TextType::class, [
+            ->add('picture', TextType::class, [
                 'label' => 'Nom de l\'image',
                 'required' => false,
             ])
@@ -44,7 +41,7 @@ class ProductType extends AbstractType
                 'label' => 'Utilisateur',
                 'choice_label' => 'username',
             ])
-            ->add('submite', SubmitType::class, [
+            ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter',
                 'attr' => [
                     'class' => 'btn btn-primary'

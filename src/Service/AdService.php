@@ -48,16 +48,16 @@ class AdService
             // converti le contenu de la requette en objet ad
             $ad = $this->serializer->deserialize($content, Ad::class, 'json');
 
-            // je vérifie que la categorie est bien renseignée
-            if (!empty($jsonData['category']['id'])) {
-                // je récupère une catégorie grâce à l'id renseigné
-                $category = $this->categoriesRepository->find($jsonData['category']['id']);
-                // j'assigne la catégorie à l'annonce
-                $ad->setCategory($category);
-            } else {
-                // Si l'id de la catégorie n'est pas renseigné, alors je renvoie une erreur 400
-                return new JsonResponse(["message" => "Veuillez associer votre produit à une catégorie"], Response::HTTP_BAD_REQUEST);
-            }
+            // // je vérifie que la categorie est bien renseignée
+            // if (!empty($jsonData['category']['id'])) {
+            //     // je récupère une catégorie grâce à l'id renseigné
+            //     $category = $this->categoriesRepository->find($jsonData['category']['id']);
+            //     // j'assigne la catégorie à l'annonce
+            //     $ad->setCategory($category);
+            // } else {
+            //     // Si l'id de la catégorie n'est pas renseigné, alors je renvoie une erreur 400
+            //     return new JsonResponse(["message" => "Veuillez associer votre produit à une catégorie"], Response::HTTP_BAD_REQUEST);
+            // }
         } catch (\Exception $e) {
             // si il y a une erreur, on retourne une reponse 400 avec le message d'erreur
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
@@ -73,22 +73,24 @@ class AdService
             }
             return new JsonResponse($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
+        // j'assigne l'utilisateur à l'annonce
         $ad->setUser($user);
+        // j'assigne la date de création à l'annonce
         $ad->setCreatedAt(new \DateTimeImmutable());
-
-        // si il n'y a pas d'erreur, on enregistre l'objet ad en base de données
-        $this->adRepository->add($ad, true);
 
         // je vérifie que le produit à mettre en vente est bien renseigné
         if (!empty($jsonData['productId'])) {
             // je récupère le produit à mettre en vente
             $product = $this->productRepository->find($jsonData['productId']);
+            // je lui attribut la catégorie de l'annonce
+            $ad->setCategory($product->getCategory());
             // je vérifie que le produit n'est pas déjà associé à une annonce
             if (!empty($product->getAd())) {
                 // si le produit est déjà associé à une annonce, alors je renvoie une erreur 400
                 return new JsonResponse(["message" => "Ce produit est déjà associé à une annonce"], Response::HTTP_BAD_REQUEST);
             }
+            // si il n'y a pas d'erreur, on enregistre l'objet ad en base de données
+            $this->adRepository->add($ad, true);
             //  je lui attribut l'id de l'annonce
             $product->setAd($ad);
             // puis j'envoie en bdd
