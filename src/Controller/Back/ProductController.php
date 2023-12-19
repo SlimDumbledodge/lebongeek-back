@@ -27,12 +27,27 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            dd($product);
+            // dd($product);
             $product->setCreatedAt(new \DateTimeImmutable());
             $productRepository->add($product, true);
         }
         return $this->renderForm('back/product/index.html.twig', [
             'form' => $form
+        ]);
+    }
+
+    /**
+     * @Route("/back/product/{id}", name="back_product_show")
+     *
+     * @param Product $product
+     * @return void
+     */
+    public function show(Product $product, ProductRepository $productRepository)
+    {
+        $productData = $productRepository->find($product);
+        // dd($productData);
+        return $this->render('back/product/show.html.twig', [
+            'product' => $productData
         ]);
     }
 }

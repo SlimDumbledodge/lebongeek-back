@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<h1>Page de détails du produit</h1>
+	<div class="card">
+		<div class="card-header">
+			<h2>Titre de la carte</h2>
+		</div>
+		<div
+			class="card-body">
+			{# {{dump(product)}} #}
+			<p>{{ product.title }}</p>
+			<p>{{ product.user.username }}</p>
+			<p>{{ product.picture }}</p>
+			<img src="{{ vich_uploader_asset(product, 'imageFile') }}" alt="Product Image">
+		</div>
+	</div>
+{% endblock %}

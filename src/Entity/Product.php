@@ -43,14 +43,15 @@ class Product
     // private $picture;
 
     /**
-     * @Vich\UploadableField(mapping="image_product", fileNameProperty="imageName")
+     * @Vich\UploadableField(mapping="image_product", fileNameProperty="picture")
      */
     private ?File $imageFile = null;
 
     /**
      * @ORM\Column(nullable="true")
+     * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
-    private ?string $imageName = null;
+    private ?string $picture = null;
 
     /**
      * @ORM\Column(type="string", length=4, nullable=true)
@@ -66,9 +67,7 @@ class Product
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Assert\Length(
-     *      min = 3,
      *      max = 50,
-     *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
@@ -153,14 +152,14 @@ class Product
         return $this->imageFile;
     }
 
-    public function setImageName(?string $imageName): void
+    public function setpicture(?string $picture): void
     {
-        $this->imageName = $imageName;
+        $this->picture = $picture;
     }
 
-    public function getImageName(): ?string
+    public function getpicture(): ?string
     {
-        return $this->imageName;
+        return $this->picture;
     }
 
     public function getYear(): ?string

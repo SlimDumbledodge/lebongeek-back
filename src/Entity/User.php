@@ -92,13 +92,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $created_at;
 
     /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user", cascade={"persist", "remove"})
      * @Groups({"users", "ads"})
      */
     private $addresses;
 
     /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="user", cascade={"remove"})
      * @Groups({"users"})
      */
     private $product;

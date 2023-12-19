@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
@@ -103,37 +105,24 @@ class ProductController extends AbstractController
     /**
      * @Route("/api/test", name="app_api_test", methods={"POST"})
      */
-    public function test(Request $request, ProductRepository $productRepository)
+    public function test(Request $request, ProductRepository $productRepository, ProductService $productService, SerializerInterface $serializer)
     {
-        /* $content = $request->getContent(); */
-        $product = new Product();
-        $form = $this->createForm(ProductType::class, $product);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // ... (votre code existant)
-            
-            // Récupérer l'objet UploadedFile
-            /** @var UploadedFile $imageFile */
-            $imageFile = $form['imageFile']->getData();
-            
-            // Obtenez le répertoire cible depuis la configuration VichUploader
-            $targetDirectory = $this->getParameter('vich_uploader.mappings.product.imageFile.upload_destination');
-            
-            // Générez un nom de fichier unique
-            $fileName = md5(uniqid()) . '.' . $imageFile->guessExtension();
-            
-            // Déplacez le fichier vers le répertoire cible
-            $imageFile->move($targetDirectory, $fileName);
-            
-            // Mettez à jour l'entité Product avec le nouveau nom de fichier
-            $product->setImageName($fileName);
-            
-            // Enregistrez l'entité dans la base de données
-            $productRepository->add($product, true);
-        }
-        dd($product);
-        return $this->json(["message" => $product]);
+
+        // Récupérez le fichier téléchargé
+        $content = $request->files->get('picture');
+        $data = $serializer->serialize($content, 'json');
+        $folderPath = 'images/product/';
+        $image_parts = explode(";base64,", $data);
+        $image_type_aux = explode("image\/", $image_parts[0]);
+        $image_type = $image_type_aux[1];
+        $image_base64 = base64_decode($image_parts[1]);
+        $file = $folderPath . uniqid() . '.' . $image_type;
+        $pictureName = explode("product/", $file);
+        file_put_contents($file, $image_base64);
+        // dd(file_put_contents($file, $image_base64));
+
+        return $productService->add($request->getContent(), $this->getUser(), $pictureName[1]);
     }
        
 }
