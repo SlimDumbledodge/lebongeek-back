@@ -9,8 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -22,9 +20,9 @@ class CategoryController extends AbstractController
      * 
      * @Route("/api/list/categories", name="app_api_list_category", methods={"GET"})
      * @param CategoryRepository $categoriesRepository
-     * @return void
+     * @return JsonResponse
      */
-    public function categoryList(CategoryRepository $categoriesRepository)
+    public function categoryList(CategoryRepository $categoriesRepository): JsonResponse
     {
         $categories = $categoriesRepository->findAll();
         return $this->json($categories, Response::HTTP_OK, [], ["groups" => "onlyCategories"]);
@@ -69,9 +67,9 @@ class CategoryController extends AbstractController
      *
      * @param Request $request
      * @param CategoryService $categoryService
-     * @return void
+     * @return JsonResponse
      */
-    public function create(Request $request, CategoryService $categoryService)
+    public function create(Request $request, CategoryService $categoryService): JsonResponse
     {
         return $categoryService->add($request->getContent());
     }
@@ -85,9 +83,9 @@ class CategoryController extends AbstractController
      * @param Request $request
      * @param Category $category
      * @param CategoryService $categoryService
-     * @return void
+     * @return JsonResponse
      */
-    public function update(Request $request, Category $category, CategoryService $categoryService)
+    public function update(Request $request, Category $category, CategoryService $categoryService): JsonResponse
     {
         return $categoryService->edit($request->getContent(), $category);
     }
@@ -98,9 +96,9 @@ class CategoryController extends AbstractController
      * @IsGranted("ROLE_ADMIN")
      * @Route("/api/{id}/categories", name="app_api_category_delete", methods={"DELETE"})
      * @param CategoryRepository $categoryRepository
-     * @return void
+     * @return JsonResponse
      */
-    public function delete(CategoryRepository $categoryRepository, Category $category)
+    public function delete(CategoryRepository $categoryRepository, Category $category): JsonResponse
     {
 
         if (!$category) {

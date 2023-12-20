@@ -22,9 +22,9 @@ class UploaderService
      * @param [type] $content = saisie
      * @param [type] $directory = dossier de destination
      * @param [type] $pictureFile = nom du fichier
-     * @return JsonResponse
+     * @return string
      */
-    public function upload($content, $directory, $pictureFile): JsonResponse
+    public function upload($content, $directory, $pictureFile): string
     {
         // je sérialise la saisie
         $data = $this->serializer->serialize($content, 'json');
@@ -45,7 +45,7 @@ class UploaderService
         // j'écris l'image dans le dossier
         file_put_contents($file, $image_base64);
 
-        return new JsonResponse($pictureName[1], Response::HTTP_OK);
+        return $pictureName[1];
     }
 
     /**
@@ -55,7 +55,7 @@ class UploaderService
      * @param [type] $picture = nom du fichier
      * @return void
      */
-    public function deletePicture($directory, $picture)
+    public function deletePicture($directory, $picture): JsonResponse
     {
         $file = $directory . $picture;
         // Vérifier si le fichier existe

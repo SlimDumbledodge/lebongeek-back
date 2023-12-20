@@ -36,7 +36,7 @@ class ProductService
      * @param User $user
      * @return JsonResponse
      */
-    public function add($content, $user, $picture = null): JsonResponse
+    public function add($content, $user): JsonResponse
     {
         try {
             // je décode la saisie
@@ -44,11 +44,6 @@ class ProductService
             //deserialise le json en objet
             $product = $this->serializer->deserialize($content, Product::class, 'json');
 
-            // je vérifie que l'image est bien renseignée
-            if ($picture) {
-                // j'assigne l'image au produit
-                $product->setPicture($picture);
-            }
             // je vérifie que la categorie est bien renseignée
             if (!empty($jsonData['category']['id'])) {
                 // je récupère une catégorie grâce à l'id renseigné
@@ -94,7 +89,7 @@ class ProductService
      * @param User $user
      * @return JsonResponse
      */
-    public function edit($content, $product, $picture = null): JsonResponse
+    public function edit($content, $product): JsonResponse
     {
         // Vérifier si l'utilisateur existe
         if (!$product) {

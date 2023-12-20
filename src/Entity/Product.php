@@ -36,13 +36,6 @@ class Product
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Url
-     * @Groups({"users", "products", "ads", "categories", "searchData"})
-     */
-    // private $picture;
-
-    /**
      * @Vich\UploadableField(mapping="image_product", fileNameProperty="picture")
      */
     private ?File $imageFile = null;
@@ -120,18 +113,6 @@ class Product
 
         return $this;
     }
-
-    // public function getPicture(): ?string
-    // {
-    //     return $this->picture;
-    // }
-
-    // public function setPicture(?string $picture): self
-    // {
-    //     $this->picture = $picture;
-
-    //     return $this;
-    // }
 
     /**
      * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
