@@ -43,6 +43,7 @@ class ProductService
             $jsonData = json_decode($content, true);
             //deserialise le json en objet
             $product = $this->serializer->deserialize($content, Product::class, 'json');
+
             // je vérifie que l'image est bien renseignée
             if ($picture) {
                 // j'assigne l'image au produit
@@ -93,7 +94,7 @@ class ProductService
      * @param User $user
      * @return JsonResponse
      */
-    public function edit($content, $product, $user = null): JsonResponse
+    public function edit($content, $product, $picture = null): JsonResponse
     {
         // Vérifier si l'utilisateur existe
         if (!$product) {

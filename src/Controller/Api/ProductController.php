@@ -3,8 +3,8 @@
 namespace App\Controller\Api;
 
 use App\Entity\Product;
-use App\Form\ProductType;
 use App\Service\ProductService;
+use App\Service\UploaderService;
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,8 +13,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
@@ -56,12 +54,20 @@ class ProductController extends AbstractController
      *
      * @param Request $request
      * @param ProductService $productService
+     * @param UploaderService $uploaderService
      * @return void
      */
-    public function create(Request $request, ProductService $productService)
+    public function create(Request $request, ProductService $productService, UploaderService $uploaderService)
     {
+        // Vérifier si l'utilisateur à renseigné une image
+        if ($request->files->get('picture')) {
+            // Récupérez le fichier téléchargé
+            $getPicture = $request->files->get('picture');
+            // j'utilise la method upload de mon UploaderService pour lui fournir le contenu reçu par la requête et le dossier de destination
+            $picture = $uploaderService->upload($getPicture, 'images/product/', 'product/');
+        }
         // j'utilise la method add de mon ProductService pour lui fournir le contenu reçu par la requête et l'utilisateur connecté
-        return $productService->add($request->getContent(), $this->getUser());
+        return $productService->add($request->getContent(), $this->getUser(), $picture ?? null);
     }
 
     /**
@@ -94,34 +100,47 @@ class ProductController extends AbstractController
     {
         // Vérifier si l'utilisateur existe
         if (!$product) {
+            // Retourner un message d'erreur si le produit n'existe pas
             return $this->json(["error" => "Product not found"], Response::HTTP_NOT_FOUND);
         }
-
+        // Supprimer le produit
         $productRepository->remove($product, true);
-
+        // Retourner un message de succès
         return $this->json(["message" => "Product deleted successfully"], Response::HTTP_OK);
     }
 
     /**
      * @Route("/api/test", name="app_api_test", methods={"POST"})
      */
-    public function test(Request $request, ProductRepository $productRepository, ProductService $productService, SerializerInterface $serializer)
+    public function test(Request $request, UploaderService $uploaderService)
     {
-
-
         // Récupérez le fichier téléchargé
         $content = $request->files->get('picture');
-        $data = $serializer->serialize($content, 'json');
-        $folderPath = 'images/product/';
-        $image_parts = explode(";base64,", $data);
-        $image_type_aux = explode("image\/", $image_parts[0]);
-        $image_type = $image_type_aux[1];
-        $image_base64 = base64_decode($image_parts[1]);
-        $file = $folderPath . uniqid() . '.' . $image_type;
-        $pictureName = explode("product/", $file);
-        file_put_contents($file, $image_base64);
-        // dd(file_put_contents($file, $image_base64));
 
-        return $productService->add($request->getContent(), $this->getUser(), $pictureName[1]);
+        return $uploaderService->upload($content, 'images/product/', 'product/');
+    }
+
+    /**
+     * @Route("/api/unlink", name="app_api_unlink", methods={"DELETE"})
+     *
+     * @return void
+     */
+    public function unlink(ProductRepository $productRepository, UploaderService $unploaderService)
+    {
+        // Récupérez le produit
+        $product = $productRepository->find(83);
+        // Récupérez le nom de l'image
+        $picture = $product->getPicture();
+        // Vérifier si l'image existe
+        if ($picture) {
+            // Supprimer l'image
+            $unploaderService->deletePicture('images/product/', $picture);
+            // Supprimer le nom de l'image dans la base de données
+            $product->setPicture(null);
+            // Mettre à jour le produit
+            $productRepository->add($product, true);
+            // Retourner un message de succès
+            return $this->json(["message" => "File deleted successfully"], Response::HTTP_OK);
+        }
     }
 }

@@ -152,12 +152,12 @@ class Product
         return $this->imageFile;
     }
 
-    public function setpicture(?string $picture): void
+    public function setPicture(?string $picture): void
     {
         $this->picture = $picture;
     }
 
-    public function getpicture(): ?string
+    public function getPicture(): ?string
     {
         return $this->picture;
     }
