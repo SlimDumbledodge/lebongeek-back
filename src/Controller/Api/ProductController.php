@@ -143,4 +143,5 @@ class ProductController extends AbstractController
             return $this->json(["message" => "File deleted successfully"], Response::HTTP_OK);
         }
     }
+       
 }
