@@ -19,7 +19,6 @@ class ProductController extends AbstractController
      */
     public function index(Request $request, ProductRepository $productRepository)
     {
-
         $product = new Product();
 
         $form = $this->createForm(ProductType::class, $product);

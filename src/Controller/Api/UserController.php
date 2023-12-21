@@ -3,8 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
 use App\Service\UserService;
+use App\Service\UploaderService;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -112,5 +113,75 @@ class UserController extends AbstractController
         $currentUser = $this->getUser();
 
         return $this->json($currentUser, Response::HTTP_OK, [], ["groups" => "users"]);
+    }
+
+    /**
+     * Add picture to User entity
+     * 
+     * @IsGranted("ROLE_USER")
+     * @Route("/api/user/avatar", name="app_api_user_avatar", methods={"POST"})
+     *
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param UploaderService $uploaderService
+     * @return JsonResponse
+     */
+    public function uploadAvatar(Request $request, UserRepository $userRepository, UploaderService $uploaderService): JsonResponse
+    {
+        // Récupérer le user connecté
+        $user = $this->getUser();
+        // Vérifier si la photo du user est renseignée
+        /** @var User $user */
+        if (!empty($user->getAvatar())) {
+            // Supprimer l'ancienne photo
+            $uploaderService->deletePicture('images/user/avatar/', $user->getAvatar());
+        }
+        // Si aucune photo n'a été renseignée, alors on met une photo par défaut
+        if (empty($request->files->get('avatar'))  && $user->getAvatar() !== 'avatar-null.png') {
+            $user->setAvatar('avatar-null.png');
+            $userRepository->add($user, true);
+            return $this->json(['message' => 'user avatar set to null'], Response::HTTP_OK);
+        }
+        // Récupérer la photo du user
+        $content = $request->files->get('avatar');
+        // Ajouter la photo au user
+        $user->setAvatar($uploaderService->upload($content, 'images/user/avatar/', 'user/avatar/'));
+        $userRepository->add($user, true);
+        return $this->json(['message' => 'user avatar added successfully'], Response::HTTP_OK);
+    }
+
+    /**
+     * Add picture to User entity
+     * 
+     * @IsGranted("ROLE_USER")
+     * @Route("/api/user/banner", name="app_api_user_banner", methods={"POST"})
+     *
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param UploaderService $uploaderService
+     * @return JsonResponse
+     */
+    public function uploadBanner(Request $request, UserRepository $userRepository, UploaderService $uploaderService): JsonResponse
+    {
+        // Récupérer le user connecté
+        $user = $this->getUser();
+        // Vérifier si la bannière du user est renseignée
+        /** @var User $user */
+        if (!empty($user->getBanner()) && $user->getBanner() !== 'banner-null.png') {
+            // Supprimer l'ancienne bannière
+            $uploaderService->deletePicture('images/user/banner/', $user->getBanner());
+        }
+        // Si aucune bannière n'a été renseignée, alors on met une photo par défaut
+        if (empty($request->files->get('banner'))) {
+            $user->setBanner('banner-null.png');
+            $userRepository->add($user, true);
+            return $this->json(['message' => 'user banner set to null'], Response::HTTP_OK);
+        }
+        // Récupérer la bannière du user
+        $content = $request->files->get('banner');
+        // Ajouter la bannière au user
+        $user->setBanner($uploaderService->upload($content, 'images/user/banner/', 'user/banner/'));
+        $userRepository->add($user, true);
+        return $this->json(['message' => 'user banner added successfully'], Response::HTTP_OK);
     }
 }

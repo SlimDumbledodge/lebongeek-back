@@ -39,8 +39,8 @@ class UserService
             $user = $this->serializerInterface->deserialize($content, User::class, 'json');
 
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
-            $user->setAvatar($user->getAvatar() ?? 'http://placehold.it/300x300');
-            $user->setBanner($user->getBanner() ?? 'http://placehold.it/500x500');
+            $user->setAvatar($user->getAvatar() ?? 'avatar-null.png');
+            $user->setBanner($user->getBanner() ?? 'banner-null.png');
             $user->setDescription($user->getDescription() ?? 'Je n\'ai pas de description');
             $user->setCreatedAt(new \DateTimeImmutable());
             $user->setRoles(['ROLE_USER']);
