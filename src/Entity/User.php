@@ -56,7 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(nullable="true")
-     * @Groups({"users", "products", "address", "ads"})
+     * @Groups({"users", "products", "address", "ads", "searchData"})
      */
     private ?string $avatar = null;
 
@@ -67,7 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(nullable="true")
-     * @Groups({"users", "products", "address", "ads"})
+     * @Groups({"users", "products", "address", "ads", "searchData"})
      */
     private ?string $banner = null;
 
