@@ -75,7 +75,7 @@ class Product
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"products", "ads", "searchData"})
+     * @Groups({"users", "products", "ads", "searchData"})
      */
     private $category;
 
@@ -93,7 +93,7 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"remove"})
-     * @Groups({"products", "categories", "searchData"})
+     * @Groups({"users", "products", "categories", "searchData"})
      */
     private $ad;
 

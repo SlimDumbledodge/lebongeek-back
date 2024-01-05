@@ -132,13 +132,13 @@ class UserController extends AbstractController
         $user = $this->getUser();
         // Vérifier si la photo du user est renseignée
         /** @var User $user */
-        if (!empty($user->getAvatar())) {
+        if (!empty($user->getAvatar() && $user->getAvatar() !== 'avatar-null.jpg')) {
             // Supprimer l'ancienne photo
             $uploaderService->deletePicture('images/user/avatar/', $user->getAvatar());
         }
         // Si aucune photo n'a été renseignée, alors on met une photo par défaut
-        if (empty($request->files->get('avatar'))  && $user->getAvatar() !== 'avatar-null.png') {
-            $user->setAvatar('avatar-null.png');
+        if (empty($request->files->get('avatar'))) {
+            $user->setAvatar('avatar-null.jpg');
             $userRepository->add($user, true);
             return $this->json(['message' => 'user avatar set to null'], Response::HTTP_OK);
         }

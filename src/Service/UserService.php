@@ -39,7 +39,7 @@ class UserService
             $user = $this->serializerInterface->deserialize($content, User::class, 'json');
 
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
-            $user->setAvatar($user->getAvatar() ?? 'avatar-null.png');
+            $user->setAvatar($user->getAvatar() ?? 'avatar-null.jpg');
             $user->setBanner($user->getBanner() ?? 'banner-null.png');
             $user->setDescription($user->getDescription() ?? 'Je n\'ai pas de description');
             $user->setCreatedAt(new \DateTimeImmutable());
@@ -104,10 +104,12 @@ class UserService
         $loggedUser->setFirstname($updatedUser->getFirstname());
         $loggedUser->setLastname($updatedUser->getLastname());
         $loggedUser->setEmail($updatedUser->getEmail());
-        $loggedUser->setPassword($this->passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
+        if ($updatedUser->getPassword() !== "jeneveuxpaschangermonmotdepasse1234") {
+            $loggedUser->setPassword($this->passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
+        }
         $loggedUser->setDescription($updatedUser->getDescription() === "" ? 'Je n\'ai pas de description' : $updatedUser->getDescription());
-        $loggedUser->setAvatar($updatedUser->getAvatar() === "" ? 'http://placehold.it/300x300' : $updatedUser->getAvatar());
-        $loggedUser->setBanner($updatedUser->getBanner() === "" ? 'http://placehold.it/500x500' : $updatedUser->getBanner());
+        // $loggedUser->setAvatar($updatedUser->getAvatar() === "" ? 'avatar-null.jpg' : $updatedUser->getAvatar());
+        // $loggedUser->setBanner($updatedUser->getBanner() === "" ? 'banner-null.png' : $updatedUser->getBanner());
         $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
 
         // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
