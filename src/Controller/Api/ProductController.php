@@ -121,13 +121,13 @@ class ProductController extends AbstractController
         // Récupérer le produit
         $product = $productRepository->find($productId);
         // Vérifier si la photo du produit est renseignée
-        if (!empty($product->getPicture())) {
+        if (!empty($product->getPicture() && $product->getPicture() !== 'product-null.png')) {
             // Supprimer l'ancienne photo
             $uploaderService->deletePicture('images/product/', $product->getPicture());
         }
-        // Si aucune photo n'a été renseignée, alors on met la photo à null
+        // Si aucune photo n'a été renseignée, alors on met une photo par défaut
         if (empty($request->files->get('picture'))) {
-            $product->setPicture(null);
+            $product->setPicture('product-null.png');
             $productRepository->add($product, true);
             return $this->json(['message' => 'Product picture set to null'], Response::HTTP_OK);
         }

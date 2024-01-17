@@ -37,7 +37,10 @@ class UserService
         try {
             // converti le contenu de la requette en objet User
             $user = $this->serializerInterface->deserialize($content, User::class, 'json');
-
+            // si le password est vide, on renvoi une erreur
+            if ($user->getPassword() === "") {
+                throw new \Exception("Password is required");
+            }
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
             $user->setAvatar($user->getAvatar() ?? 'avatar-null.jpg');
             $user->setBanner($user->getBanner() ?? 'banner-null.png');
@@ -104,12 +107,10 @@ class UserService
         $loggedUser->setFirstname($updatedUser->getFirstname());
         $loggedUser->setLastname($updatedUser->getLastname());
         $loggedUser->setEmail($updatedUser->getEmail());
-        if ($updatedUser->getPassword() !== "jeneveuxpaschangermonmotdepasse1234") {
+        if ($updatedUser->getPassword() !== "") {
             $loggedUser->setPassword($this->passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
         }
         $loggedUser->setDescription($updatedUser->getDescription() === "" ? 'Je n\'ai pas de description' : $updatedUser->getDescription());
-        // $loggedUser->setAvatar($updatedUser->getAvatar() === "" ? 'avatar-null.jpg' : $updatedUser->getAvatar());
-        // $loggedUser->setBanner($updatedUser->getBanner() === "" ? 'banner-null.png' : $updatedUser->getBanner());
         $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
 
         // si il n'y a pas d'erreur, on enregistre l'objet User en base de données

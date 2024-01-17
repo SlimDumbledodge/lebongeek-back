@@ -28,13 +28,13 @@ class Category
      * @Groups({"users", "products", "categories", "ads", "onlyCategories", "searchData"})
      */
     private $name;
-    
+
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"users", "products", "categories", "ads", "onlyCategories", "searchData"})
      */
     private $image;
-    
+
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="category")
      * @Groups({"categories"})
@@ -48,7 +48,7 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"categories", "onlyCategories", "searchData"})
+     * @Groups({"users", "categories", "onlyCategories", "searchData"})
      */
     private $slug;
 

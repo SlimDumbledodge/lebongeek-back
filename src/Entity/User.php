@@ -24,7 +24,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "address", "ads", "searchData", "transaction"})
+     * @Groups({"users", "products", "address", "ads", "searchData", "transaction", "categories"})
      */
     private $id;
 
@@ -128,7 +128,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string", length=255, nullable=false)
-     * @Assert\NotBlank
      */
     private $password;
 

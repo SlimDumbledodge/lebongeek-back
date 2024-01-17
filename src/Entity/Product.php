@@ -27,9 +27,7 @@ class Product
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
      * @Assert\Length(
-     *      min = 5,
      *      max = 250,
-     *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
@@ -49,7 +47,7 @@ class Product
     /**
      * @ORM\Column(type="string", length=4, nullable=true)
      * @Assert\Length(
-     *      min = 3,
+     *      min = 4,
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")

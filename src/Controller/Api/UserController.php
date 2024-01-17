@@ -40,9 +40,7 @@ class UserController extends AbstractController
     public function show(User $user): JsonResponse
     {
         if (!$user) {
-            return $this->json([
-                "error" => "User not found"
-            ], Response::HTTP_NOT_FOUND);
+            return $this->json(["error" => "User not found"], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
@@ -91,11 +89,7 @@ class UserController extends AbstractController
      */
     public function delete(UserRepository $userRepository, User $loggedUser): JsonResponse
     {
-        // si l'utilisateur n'existe pas, on retourne une reponse 404
-        if (!$loggedUser) {
-            return $this->json(["error" => "User not found"], Response::HTTP_NOT_FOUND);
-        }
-
+        // supprime le user de la base de données
         $userRepository->remove($loggedUser, true);
         // si tout s'est bien passé, on retourne une reponse 200
         return $this->json(["message" => "User deleted successfully"], Response::HTTP_OK);
