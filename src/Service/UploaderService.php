@@ -43,16 +43,35 @@ class UploaderService
         // je récupère le nom de l'image
         $pictureName = explode($pictureFile, $file);
 
-        // j'écris l'image dans le dossier
-        // file_put_contents($file, $image_base64);
-
         // Créez une image à partir d'un base64
         $image = imagecreatefromstring($image_base64);
+        // je redimensionne l'image
+        $newWidth = 500;
+        $newHeight = 500;
+
+        // Récupérer les dimensions de l'image
+        $imageWidth = imagesx($image);
+        $imageHeight = imagesy($image);
+
+        // Calculez les proportions pour redimensionner l'image tout en préservant l'aspect ratio
+        $ratio = max($newWidth / $imageWidth, $newHeight / $imageHeight);
+        // Calculez les dimensions de la nouvelle image
+        $resizedWidth = $imageWidth * $ratio;
+        $resizedHeight = $imageHeight * $ratio;
+
+        // Calculez les coordonnées du coin supérieur gauche du rectangle pour que le rectangle soit centré
+        $x = ($resizedWidth - $newWidth) / 2;
+        $y = ($resizedHeight - $newHeight) / 2;
+
         // Créez une nouvelle image redimensionnée
-        $resizedImage = imagecreatetruecolor(500, 500);
-        imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, 500, 500, imagesx($image), imagesy($image));
+        $resizedImage = imagecreatetruecolor($resizedWidth, $resizedHeight);
+        imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $resizedWidth, $resizedHeight, $imageWidth, $imageHeight);
+
+        // Créez une nouvelle image rognée pour éliminer les bandes noires
+        $croppedImage = imagecrop($resizedImage, ['x' => $x, 'y' => $y, 'width' => $newWidth, 'height' => $newHeight]);
+
         // j'écris l'image dans le dossier
-        imagejpeg($resizedImage, $file, 100);
+        imagejpeg($croppedImage, $file, 100);
 
         // je retourne le nom de l'image
         return $pictureName[1];
