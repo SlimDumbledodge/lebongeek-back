@@ -6,16 +6,20 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields="username", message="Ce pseudo est déjà associé à un compte")
+ * @UniqueEntity(fields="email", message="Cet e-mail est déjà associé à un compte")
+ * @UniqueEntity(fields="phone_number", message="Ce numéro de téléphone est déjà associé à un compte")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 
@@ -74,7 +78,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      * @Assert\NotBlank
-     * @Assert\Email(message = "l'email '{{ value }}' n'est pas valide.")
      * @Groups({"users", "products", "address", "ads"})
      */
     private $email;
