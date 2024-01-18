@@ -57,17 +57,10 @@ class ProductController extends AbstractController
      * @param UploaderService $uploaderService
      * @return void
      */
-    public function create(Request $request, ProductService $productService, UploaderService $uploaderService)
+    public function create(Request $request, ProductService $productService): JsonResponse
     {
-        // Vérifier si l'utilisateur à renseigné une image
-        if ($request->files->get('picture')) {
-            // Récupérez le fichier téléchargé
-            $getPicture = $request->files->get('picture');
-            // j'utilise la method upload de mon UploaderService pour lui fournir le contenu reçu par la requête et le dossier de destination
-            $picture = $uploaderService->upload($getPicture, 'images/product/', 'product/');
-        }
         // j'utilise la method add de mon ProductService pour lui fournir le contenu reçu par la requête et l'utilisateur connecté
-        return $productService->add($request->getContent(), $this->getUser(), $picture ?? null);
+        return $productService->add($request->getContent(), $this->getUser());
     }
 
     /**
@@ -81,7 +74,7 @@ class ProductController extends AbstractController
      * @param ProductService $productService
      * @return void
      */
-    public function update(Request $request, Product $product, ProductService $productService)
+    public function update(Request $request, Product $product, ProductService $productService): JsonResponse
     {
         // j'utilise la method edit de mon ProductService pour lui fournir le contenu reçu par la requête et le product à modifier
         return $productService->edit($request->getContent(), $product);
@@ -110,38 +103,39 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/api/test", name="app_api_test", methods={"POST"})
-     */
-    public function test(Request $request, UploaderService $uploaderService)
-    {
-        // Récupérez le fichier téléchargé
-        $content = $request->files->get('picture');
-
-        return $uploaderService->upload($content, 'images/product/', 'product/');
-    }
-
-    /**
-     * @Route("/api/unlink", name="app_api_unlink", methods={"DELETE"})
+     * Add picture to Product entity
+     * 
+     * @IsGranted("ROLE_USER")
+     * @Route("/api/{id}/product/picture", name="app_api_product_picture", methods={"POST"})
      *
-     * @return void
+     * @param Request $request
+     * @param ProductRepository $productRepository
+     * @param UploaderService $uploaderService
+     * @return JsonResponse
      */
-    public function unlink(ProductRepository $productRepository, UploaderService $unploaderService)
+    public function uploadPicture(Request $request, ProductRepository $productRepository, UploaderService $uploaderService): JsonResponse
     {
-        // Récupérez le produit
-        $product = $productRepository->find(83);
-        // Récupérez le nom de l'image
-        $picture = $product->getPicture();
-        // Vérifier si l'image existe
-        if ($picture) {
-            // Supprimer l'image
-            $unploaderService->deletePicture('images/product/', $picture);
-            // Supprimer le nom de l'image dans la base de données
-            $product->setPicture(null);
-            // Mettre à jour le produit
-            $productRepository->add($product, true);
-            // Retourner un message de succès
-            return $this->json(["message" => "File deleted successfully"], Response::HTTP_OK);
+        // Récupérer l'id du produit
+        $id = $request->get('id');
+        $productId = json_decode($id, true);
+        // Récupérer le produit
+        $product = $productRepository->find($productId);
+        // Vérifier si la photo du produit est renseignée
+        if (!empty($product->getPicture() && $product->getPicture() !== 'product-null.png')) {
+            // Supprimer l'ancienne photo
+            $uploaderService->deletePicture('images/product/', $product->getPicture());
         }
+        // Si aucune photo n'a été renseignée, alors on met une photo par défaut
+        if (empty($request->files->get('picture'))) {
+            $product->setPicture('product-null.png');
+            $productRepository->add($product, true);
+            return $this->json(['message' => 'Product picture set to null'], Response::HTTP_OK);
+        }
+        // Récupérer la photo du produit
+        $content = $request->files->get('picture');
+        // Ajouter la photo au produit
+        $product->setPicture($uploaderService->upload($content, 'images/product/', 'product/'));
+        $productRepository->add($product, true);
+        return $this->json(['message' => 'Product picture added successfully'], Response::HTTP_OK);
     }
-       
 }

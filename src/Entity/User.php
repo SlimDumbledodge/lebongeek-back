@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -22,7 +24,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users", "products", "address", "ads", "searchData", "transaction"})
+     * @Groups({"users", "products", "address", "ads", "searchData", "transaction", "categories"})
      */
     private $id;
 
@@ -48,18 +50,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=false)l
-     * @Assert\Url
-     * @Groups({"users", "products", "address", "ads", "searchData"})
+     * @Vich\UploadableField(mapping="image_user_avatar", fileNameProperty="avatar")
      */
-    private $avatar;
+    private ?File $imageFileAvatar = null;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Url
+     * @ORM\Column(nullable="true")
      * @Groups({"users", "products", "address", "ads", "searchData"})
      */
-    private $banner;
+    private ?string $avatar = null;
+
+    /**
+     * @Vich\UploadableField(mapping="image_user_banner", fileNameProperty="banner")
+     */
+    private ?File $imageFileBanner = null;
+
+    /**
+     * @ORM\Column(nullable="true")
+     * @Groups({"users", "products", "address", "ads", "searchData"})
+     */
+    private ?string $banner = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false, unique=true)
@@ -92,6 +102,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $created_at;
 
     /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups({"users", "products", "address", "ads"})
+     */
+    private $updated_at;
+
+    /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user", cascade={"persist", "remove"})
      * @Groups({"users", "ads"})
      */
@@ -112,7 +128,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string", length=255, nullable=false)
-     * @Assert\NotBlank
      */
     private $password;
 
@@ -169,6 +184,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFileAvatar
+     */
+    public function setimageFileAvatar(?File $imageFileAvatar = null): void
+    {
+        $this->imageFileAvatar = $imageFileAvatar;
+
+        if (null !== $imageFileAvatar) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updated_at = new \DateTimeImmutable();
+        }
+    }
+
+    public function getimageFileAvatar(): ?File
+    {
+        return $this->imageFileAvatar;
+    }
+
     public function getAvatar(): ?string
     {
         return $this->avatar;
@@ -179,6 +213,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->avatar = $avatar;
 
         return $this;
+    }
+
+    /**
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFileBanner
+     */
+    public function setimageFileBanner(?File $imageFileBanner = null): void
+    {
+        $this->imageFileBanner = $imageFileBanner;
+
+        if (null !== $imageFileBanner) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updated_at = new \DateTimeImmutable();
+        }
+    }
+
+    public function getimageFileBanner(): ?File
+    {
+        return $this->imageFileBanner;
     }
 
     public function getBanner(): ?string
@@ -237,6 +290,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updated_at): self
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

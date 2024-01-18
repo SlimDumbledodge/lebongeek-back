@@ -27,20 +27,11 @@ class Product
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
      * @Assert\Length(
-     *      min = 5,
      *      max = 250,
-     *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "products", "ads", "categories", "searchData"})
      */
     private $title;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Url
-     * @Groups({"users", "products", "ads", "categories", "searchData"})
-     */
-    // private $picture;
 
     /**
      * @Vich\UploadableField(mapping="image_product", fileNameProperty="picture")
@@ -56,7 +47,7 @@ class Product
     /**
      * @ORM\Column(type="string", length=4, nullable=true)
      * @Assert\Length(
-     *      min = 3,
+     *      min = 4,
      *      max = 15,
      *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
@@ -82,7 +73,7 @@ class Product
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="product", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"products", "ads", "searchData"})
+     * @Groups({"users", "products", "ads", "searchData"})
      */
     private $category;
 
@@ -100,7 +91,7 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity=Ad::class, inversedBy="products", cascade={"remove"})
-     * @Groups({"products", "categories", "searchData"})
+     * @Groups({"users", "products", "categories", "searchData"})
      */
     private $ad;
 
@@ -120,18 +111,6 @@ class Product
 
         return $this;
     }
-
-    // public function getPicture(): ?string
-    // {
-    //     return $this->picture;
-    // }
-
-    // public function setPicture(?string $picture): self
-    // {
-    //     $this->picture = $picture;
-
-    //     return $this;
-    // }
 
     /**
      * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile

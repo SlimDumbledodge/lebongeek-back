@@ -23,11 +23,10 @@ class Ad
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank@Assert\Length(
-     *      min = 5,
+     * @ORM\Column(type="string", length=255, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Length(
      *      max = 255,
-     *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "ads", "products", "categories", "searchData"})
      */
@@ -37,9 +36,7 @@ class Ad
      * @ORM\Column(type="text", nullable=false)
      * @Assert\NotBlank
      * @Assert\Length(
-     *      min = 5,
      *      max = 5000,
-     *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "ads", "products", "categories", "searchData"})
      */
@@ -81,7 +78,7 @@ class Ad
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="ad")
-     * @Groups({"ads"})
+     * @Groups({"ads", "categories"})
      */
     private $user;
 

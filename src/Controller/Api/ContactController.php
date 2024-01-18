@@ -11,6 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class ContactController extends AbstractController
 {
     /**
+     * Send a contact mail
+     * 
      * @Route("/api/contact", name="app_api_contact", methods={"POST"})
      */
     public function contact(Request $request, MyMailer $mailer): JsonResponse

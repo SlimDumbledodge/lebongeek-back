@@ -7,6 +7,7 @@ use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -20,9 +21,9 @@ class TransactionController extends AbstractController
      * @param Request $request
      * @param MyMailer $mailer
      * @param ProductRepository $productRepository
-     * @return void
+     * @return JsonResponse
      */
-    public function confirmationMail(Request $request, MyMailer $mailer, ProductRepository $productRepository)
+    public function confirmationMail(Request $request, MyMailer $mailer, ProductRepository $productRepository): JsonResponse
     {
         $content = json_decode($request->getContent(), true);
         // je récupère le produit grâce à l'id renseigné

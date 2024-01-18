@@ -4,15 +4,19 @@ namespace App\Controller\Back;
 
 use App\Repository\ProductRepository;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * @IsGranted("ROLE_ADMIN")
+ */
 class MainController extends AbstractController
 {
     /**
-     * @Route("/back/home", name="app_back_home")
+     * @Route("/", name="app_back_home")
      */
     public function home(ProductRepository $productRepository, Request $request, PaginatorInterface $paginator): Response
     {
