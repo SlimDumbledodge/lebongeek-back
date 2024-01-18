@@ -42,9 +42,19 @@ class UploaderService
         $file = $folderPath . uniqid() . '.' . $image_type;
         // je récupère le nom de l'image
         $pictureName = explode($pictureFile, $file);
-        // j'écris l'image dans le dossier
-        file_put_contents($file, $image_base64);
 
+        // j'écris l'image dans le dossier
+        // file_put_contents($file, $image_base64);
+
+        // Créez une image à partir d'un base64
+        $image = imagecreatefromstring($image_base64);
+        // Créez une nouvelle image redimensionnée
+        $resizedImage = imagecreatetruecolor(500, 500);
+        imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, 500, 500, imagesx($image), imagesy($image));
+        // j'écris l'image dans le dossier
+        imagejpeg($resizedImage, $file, 100);
+
+        // je retourne le nom de l'image
         return $pictureName[1];
     }
 
