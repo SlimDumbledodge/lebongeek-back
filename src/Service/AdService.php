@@ -22,15 +22,12 @@ class AdService
 
     private $productRepository;
 
-    private $categoriesRepository;
-
-    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, AdRepository $adRepository, ProductRepository $productRepository, CategoryRepository $categoriesRepository)
+    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, AdRepository $adRepository, ProductRepository $productRepository)
     {
         $this->serializer = $serializer;
         $this->validator = $validator;
         $this->adRepository = $adRepository;
         $this->productRepository = $productRepository;
-        $this->categoriesRepository = $categoriesRepository;
     }
 
     /**

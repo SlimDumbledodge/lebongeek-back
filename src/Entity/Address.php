@@ -23,16 +23,14 @@ class Address
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(
-     *      min = 5,
      *      max = 255,
-     *      minMessage = "Nombre de caractère minimum {{ limit }}",
      *      maxMessage = "Nombre de caractère maximum {{ limit }}")
      * @Groups({"users", "address"})
      */
     private $name_address;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank
      * @Groups({"users", "address"})
      */

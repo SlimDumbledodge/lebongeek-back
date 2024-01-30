@@ -50,7 +50,6 @@ class TransactionController extends AbstractController
             }
         }
         // si l'utilisateur n'est pas le vendeur ou que l'annonce n'existe pas
-        // return new Response('Accès interdit.', Response::HTTP_FORBIDDEN);
         return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
     }
 }
