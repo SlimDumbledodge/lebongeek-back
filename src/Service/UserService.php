@@ -86,6 +86,29 @@ class UserService
         try {
             // converti le contenu de la requette en objet User
             $updatedUser = $this->serializerInterface->deserialize($content, User::class, 'json');
+            // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
+
+            if ($updatedUser->getUsername() !== "") {
+                $loggedUser->setUsername($updatedUser->getUsername());
+            }
+
+            if ($updatedUser->getEmail() !== "") {
+                $loggedUser->setEmail($updatedUser->getEmail());
+            }
+
+            if ($updatedUser->getPhoneNumber() !== "") {
+                $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
+            }
+
+            if ($updatedUser->getPassword() !== "") {
+                $loggedUser->setPassword($this->passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
+            }
+
+            $loggedUser->setAvatar($updatedUser->getAvatar());
+            $loggedUser->setBanner($updatedUser->getBanner());
+            $loggedUser->setFirstname($updatedUser->getFirstname());
+            $loggedUser->setLastname($updatedUser->getLastname());
+            $loggedUser->setDescription($updatedUser->getDescription() === "" ? 'Je n\'ai pas de description' : $updatedUser->getDescription());
         } catch (NotEncodableValueException $err) {
             // plutôt que de faire le comportement de base de l'exception (message rouge moche), je renvoi un json
             return new JsonResponse(["message" => "JSON invalide"], Response::HTTP_BAD_REQUEST);
@@ -99,19 +122,9 @@ class UserService
                 // ici je met le nom du champs en index et le message d'erreur en valeur
                 $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
             }
+
             return new JsonResponse($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
-        $loggedUser->setUsername($updatedUser->getUsername());
-        $loggedUser->setFirstname($updatedUser->getFirstname());
-        $loggedUser->setLastname($updatedUser->getLastname());
-        $loggedUser->setEmail($updatedUser->getEmail());
-        if ($updatedUser->getPassword() !== "") {
-            $loggedUser->setPassword($this->passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
-        }
-        $loggedUser->setDescription($updatedUser->getDescription() === "" ? 'Je n\'ai pas de description' : $updatedUser->getDescription());
-        $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
 
         // si il n'y a pas d'erreur, on enregistre l'objet User en base de données
         $this->userRepository->add($loggedUser, true);
