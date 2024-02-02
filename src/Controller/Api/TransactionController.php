@@ -28,7 +28,11 @@ class TransactionController extends AbstractController
         $content = json_decode($request->getContent(), true);
         // je récupère le produit grâce à l'id renseigné
         $product = $productRepository->findProductByAdId($content['ad']);
-
+        // si le produit n'existe pas, je retourne une erreur
+        if (!$product) {
+            return $this->json(['message' => 'Produit introuvable !'], Response::HTTP_NOT_FOUND);
+        }
+        // j'envoie le mail de confirmation
         $mailer->sendTransaction(
             // le mail du vendeur
             $product[0]->getUser()->getEmail(),

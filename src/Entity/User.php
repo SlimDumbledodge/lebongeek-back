@@ -34,7 +34,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=64, nullable=false, unique=true)
-     * @Assert\NotBlank
      * @Groups({"users", "products", "address", "ads", "searchData"})
      */
     private $username;
@@ -77,14 +76,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false, unique=true)
-     * @Assert\NotBlank
      * @Groups({"users", "products", "address", "ads"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=15, nullable=false, unique=true)
-     * @Assert\NotBlank
      * @Groups({"users", "products", "address", "ads"})
      */
     private $phone_number;
@@ -131,6 +128,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @Assert\Length(
+     *      min = 8,
+     *      minMessage = "Nombre de caractère minimum {{ limit }}")
      */
     private $password;
 
