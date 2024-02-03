@@ -18,6 +18,8 @@ class UserService
     private $validator;
     private $passwordHasher;
 
+    const REGEX = "/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\d\s])\S{8,}$/";
+
     public function __construct(UserRepository $userRepository, SerializerInterface $serializerInterface, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher)
     {
         $this->userRepository = $userRepository;
@@ -37,9 +39,25 @@ class UserService
         try {
             // converti le contenu de la requette en objet User
             $user = $this->serializerInterface->deserialize($content, User::class, 'json');
+            // si le nom d'utilisateur est vide, on renvoi une erreur
+            if ($user->getUsername() === "") {
+                return new JsonResponse("Veuillez renseigner un nom d'utilisateur", Response::HTTP_BAD_REQUEST);
+            }
+            // si l'email est vide, on renvoi une erreur
+            if ($user->getEmail() === "") {
+                return new JsonResponse("Veuillez renseigner un email", Response::HTTP_BAD_REQUEST);
+            }
+            // si le numéro de téléphone est vide, on renvoi une erreur
+            if ($user->getPhoneNumber() === "") {
+                return new JsonResponse("Veuillez renseigner un numéro de téléphone", Response::HTTP_BAD_REQUEST);
+            }
             // si le password est vide, on renvoi une erreur
             if ($user->getPassword() === "") {
-                throw new \Exception("Password is required");
+                return new JsonResponse("Veuillez renseigner un mot de passe", Response::HTTP_BAD_REQUEST);
+            }
+            // si le mot de passe fait moins de 8 caractères, ne contient pas au moins une majuscule, une minuscule, un chiffre et un caractère spécial, on renvoi une erreur
+            if (!preg_match(self::REGEX, $user->getPassword())) {
+                return new JsonResponse("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial", Response::HTTP_BAD_REQUEST);
             }
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
             $user->setAvatar($user->getAvatar() ?? 'avatar-null.jpg');
@@ -86,26 +104,27 @@ class UserService
         try {
             // converti le contenu de la requette en objet User
             $updatedUser = $this->serializerInterface->deserialize($content, User::class, 'json');
-            // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
-
+            // si le nom d'utilisateur est vide, on ne le modifie pas
             if ($updatedUser->getUsername() !== "") {
                 $loggedUser->setUsername($updatedUser->getUsername());
             }
-
+            // si l'email est vide, on ne le modifie pas
             if ($updatedUser->getEmail() !== "") {
                 $loggedUser->setEmail($updatedUser->getEmail());
             }
-
+            // si le numéro de téléphone est vide, on ne le modifie pas
             if ($updatedUser->getPhoneNumber() !== "") {
                 $loggedUser->setPhoneNumber($updatedUser->getPhoneNumber());
             }
-
+            // si le password est vide, on ne le modifie pas
             if ($updatedUser->getPassword() !== "") {
+                // si le mot de passe fait moins de 8 caractères, ne contient pas au moins une majuscule, une minuscule, un chiffre et un caractère spécial, on renvoi une erreur
+                if (!preg_match(self::REGEX, $updatedUser->getPassword())) {
+                    return new JsonResponse("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial", Response::HTTP_BAD_REQUEST);
+                }
                 $loggedUser->setPassword($this->passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
             }
 
-            $loggedUser->setAvatar($updatedUser->getAvatar());
-            $loggedUser->setBanner($updatedUser->getBanner());
             $loggedUser->setFirstname($updatedUser->getFirstname());
             $loggedUser->setLastname($updatedUser->getLastname());
             $loggedUser->setDescription($updatedUser->getDescription() === "" ? 'Je n\'ai pas de description' : $updatedUser->getDescription());

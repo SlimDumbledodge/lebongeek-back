@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Assets\Length;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
@@ -128,9 +129,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string", length=255, nullable=false)
-     * @Assert\Length(
-     *      min = 8,
-     *      minMessage = "Nombre de caractère minimum {{ limit }}")
+     * @Assert\Regex("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\d\s])\S{8,}$/")
      */
     private $password;
 
