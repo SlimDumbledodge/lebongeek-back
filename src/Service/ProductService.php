@@ -134,7 +134,6 @@ class ProductService
 
         // Mettre à jour les propriétés de l'utilisateur existant avec les nouvelles données
         $product->setTitle($updatedProduct->getTitle());
-        $product->setPicture($updatedProduct->getPicture());
         $product->setYear($updatedProduct->getYear());
         $product->setSerialNumber($updatedProduct->getSerialNumber());
         $product->setUpdatedAt(new \DateTimeImmutable());

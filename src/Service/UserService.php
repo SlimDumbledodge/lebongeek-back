@@ -47,17 +47,25 @@ class UserService
             if ($user->getEmail() === "") {
                 return new JsonResponse("Veuillez renseigner un email", Response::HTTP_BAD_REQUEST);
             }
-            // si le numéro de téléphone est vide, on renvoi une erreur
-            if ($user->getPhoneNumber() === "") {
-                return new JsonResponse("Veuillez renseigner un numéro de téléphone", Response::HTTP_BAD_REQUEST);
-            }
             // si le password est vide, on renvoi une erreur
             if ($user->getPassword() === "") {
                 return new JsonResponse("Veuillez renseigner un mot de passe", Response::HTTP_BAD_REQUEST);
             }
             // si le mot de passe fait moins de 8 caractères, ne contient pas au moins une majuscule, une minuscule, un chiffre et un caractère spécial, on renvoi une erreur
             if (!preg_match(self::REGEX, $user->getPassword())) {
-                return new JsonResponse("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial", Response::HTTP_BAD_REQUEST);
+                return new JsonResponse("Le mot de passe doit contenir au minimum 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial", Response::HTTP_BAD_REQUEST);
+            }
+            // si le prénom est vide, on renvoi une erreur
+            if ($user->getFirstname() === "") {
+                return new JsonResponse("Veuillez renseigner un prénom", Response::HTTP_BAD_REQUEST);
+            }
+            // si le nom est vide, on renvoi une erreur
+            if ($user->getLastname() === "") {
+                return new JsonResponse("Veuillez renseigner un nom", Response::HTTP_BAD_REQUEST);
+            }
+            // si le numéro de téléphone est vide, on renvoi une erreur
+            if ($user->getPhoneNumber() === "") {
+                return new JsonResponse("Veuillez renseigner un numéro de téléphone", Response::HTTP_BAD_REQUEST);
             }
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
             $user->setAvatar($user->getAvatar() ?? 'avatar-null.jpg');
