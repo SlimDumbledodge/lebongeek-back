@@ -130,7 +130,7 @@ class UserService
                 if (!preg_match(self::REGEX, $updatedUser->getPassword())) {
                     return new JsonResponse("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial", Response::HTTP_BAD_REQUEST);
                 }
-                $loggedUser->setPassword($this->passwordHasher->hashPassword($updatedUser, $updatedUser->getPassword()));
+                $loggedUser->setPassword($this->passwordHasher->hashPassword($loggedUser, $updatedUser->getPassword()));
             }
 
             $loggedUser->setFirstname($updatedUser->getFirstname());
@@ -141,7 +141,10 @@ class UserService
             return new JsonResponse(["message" => "JSON invalide"], Response::HTTP_BAD_REQUEST);
         }
         // valide l'objet User (permet de vérifier les assert de l'entité)
-        $errors = $this->validator->validate($updatedUser);
+        // On doit valider l'utilisateur qui sera persisté (celui connecté),
+        // pas l'objet DTO désérialisé qui peut déjà exister en base et provoquer
+        // des faux positifs sur les contraintes d'unicité.
+        $errors = $this->validator->validate($loggedUser);
         // si il y a des erreurs, on les retourne
         if (count($errors) > 0) {
             $dataErrors = [];

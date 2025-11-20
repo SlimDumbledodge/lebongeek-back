@@ -28,7 +28,7 @@ class MyMailer
     {
         $email = (new Email())
             ->from($from)
-            ->to($this->adminMail)
+            ->to('amael.rosales@gmail')
             ->subject($subject)
             ->text($content);
 

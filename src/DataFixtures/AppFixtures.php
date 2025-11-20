@@ -32,44 +32,44 @@ class AppFixtures extends Fixture
 
         //!  USER
 
-        // $userList = [];
+        $userList = [];
 
-        // for ($i = 0; $i < 40; $i++) {
+        for ($i = 0; $i < 40; $i++) {
 
-        //     $user = new User();
+            $user = new User();
 
-        //     $user->setUsername($faker->name());
-        //     $user->setPassword($this->passwordHasher->hashPassword($user, 'password'));
-        //     $user->setFirstname($faker->firstName());
-        //     $user->setLastname($faker->lastName());
-        //     $user->setAvatar($faker->imageUrl(640, 480, 'cats'));
-        //     $user->setBanner($faker->imageUrl(800, 800, 'cats'));
-        //     $user->setEmail($faker->email());
-        //     $user->setCreatedAt(new \DateTimeImmutable());
-        //     $user->setPhoneNumber($faker->isbn10());
-        //     $user->setRoles(['ROLE_USER']);
+            $user->setUsername($faker->userName());
+            $user->setPassword($this->passwordHasher->hashPassword($user, 'password'));
+            $user->setFirstname($faker->firstName());
+            $user->setLastname($faker->lastName());
+            $user->setAvatar($faker->imageUrl(640, 480, 'people'));
+            $user->setBanner($faker->imageUrl(800, 800, 'people'));
+            $user->setEmail($faker->unique()->safeEmail());
+            $user->setCreatedAt(new \DateTimeImmutable());
+            $user->setPhoneNumber((string)$faker->numerify('06########'));
+            $user->setRoles(['ROLE_USER']);
 
-        //     $userList[] = $user;
+            $userList[] = $user;
 
-        //     $manager->persist($user);
-        // }
+            $manager->persist($user);
+        }
 
         //! ADDRESS
 
-        // for ($j = 0; $j < 20; $j++) {
+        for ($j = 0; $j < 20; $j++) {
 
-        //     $address = new Address();
+            $address = new Address();
 
-        //     $address->setNameAddress($faker->streetName());
-        //     $address->setStreetNumber(random_int(1, 22));
-        //     $address->setStreet($faker->streetName());
-        //     $address->setPostalCode($faker->postcode());
-        //     $address->setCity($faker->city());
-        //     $address->setCountry($faker->country());
-        //     $address->setUser($faker->randomElement($userList));
+            $address->setNameAddress($faker->streetName());
+            $address->setStreetNumber((string)random_int(1, 200));
+            $address->setStreet($faker->streetName());
+            $address->setPostalCode($faker->postcode());
+            $address->setCity($faker->city());
+            $address->setCountry($faker->country());
+            $address->setUser($faker->randomElement($userList));
 
-        //     $manager->persist($address);
-        // }
+            $manager->persist($address);
+        }
 
         //! CATEGORY
 
@@ -89,48 +89,46 @@ class AppFixtures extends Fixture
 
         //! AD
 
-        // $adList = [];
+        $adList = [];
 
-        // for ($k = 0; $k < 40; $k++) {
+        for ($k = 0; $k < 40; $k++) {
 
-        //     $ad = new Ad();
+            $ad = new Ad();
 
-        //     $ad->setTitle($faker->title());
-        //     $ad->setDescription($faker->text());
-        //     $ad->setPrice($faker->randomFloat(2, 0, 1000));
-        //     $ad->setDescription($faker->text());
-        //     $ad->setState(rand(1, 6));
-        //     $ad->setLocation($faker->city());
-        //     $ad->setCreatedAt(new \DateTimeImmutable());
-        //     $ad->setCategory($faker->randomElement($categoryList));
-        //     $ad->setUser($userList[$k]);
+            $ad->setTitle($faker->sentence(3, true));
+            $ad->setDescription($faker->paragraph());
+            $ad->setPrice(random_int(5, 1500));
+            $ad->setState(rand(1, 6));
+            $ad->setLocation($faker->city());
+            $ad->setCreatedAt(new \DateTimeImmutable());
+            $ad->setCategory($faker->randomElement($categoryList));
+            $ad->setUser($userList[$k]);
 
-        //     $adList[] = $ad;
+            $adList[] = $ad;
 
-        //     $manager->persist($ad);
-        // }
+            $manager->persist($ad);
+        }
 
         //! PRODUCT
 
-        // $productList = [];
+        $productList = [];
 
-        // for ($l = 0; $l < 40; $l++) {
+        for ($l = 0; $l < 40; $l++) {
 
-        //     $product = new Product();
+            $product = new Product();
 
-        //     $product->setTitle($faker->title());
-        //     // $product->setPicture($faker->imageUrl(640, 480, 'dogs'));
-        //     $product->setYear($faker->year());
-        //     $product->setSerialNumber(rand(100, 30000));
-        //     $product->setCreatedAt(new \DateTimeImmutable());
-        //     $product->setCategory($faker->randomElement($categoryList));
-        //     $product->setUser($userList[$l]);
-        //     $product->setAd($adList[$l]);
+            $product->setTitle($faker->words(3, true));
+            $product->setYear($faker->year());
+            $product->setSerialNumber((string)rand(100, 30000));
+            $product->setCreatedAt(new \DateTimeImmutable());
+            $product->setCategory($faker->randomElement($categoryList));
+            $product->setUser($userList[$l]);
+            $product->setAd($adList[$l]);
 
-        //     $productList[] = $product;
+            $productList[] = $product;
 
-        //     $manager->persist($product);
-        // }
+            $manager->persist($product);
+        }
 
         $manager->flush();
     }
