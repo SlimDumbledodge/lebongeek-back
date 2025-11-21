@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: symfony-app
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false  # tu définiras la vraie valeur dans Render Dashboard
