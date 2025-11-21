@@ -16,7 +16,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Installer les dépendances PHP
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
 # Étape 2 : Image finale avec Nginx
 FROM php:8.3-fpm-alpine

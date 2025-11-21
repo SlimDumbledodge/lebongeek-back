@@ -3,13 +3,14 @@ set -e
 
 echo "Starting deployment..."
 
-# Démarrer PHP-FPM en arrière-plan
+# Start PHP-FPM in the background
 php-fpm -D
-
-# Attendre quelques secondes
 sleep 3
 
-echo "Running Symfony cache warmup..."
+echo "Running composer scripts..."
+composer run-script post-install-cmd --no-dev --no-interaction || true
+
+echo "Clearing and warming cache..."
 php bin/console cache:clear --env=prod
 php bin/console cache:warmup --env=prod
 
